@@ -20,6 +20,7 @@ export interface User {
   modo_guerra_acesso?: boolean;
   continuidade_30dias?: boolean;
   disparo_rapido_acesso?: boolean;
+  foco_acesso?: boolean;
   created_at: string;
 }
 
