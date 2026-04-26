@@ -27,6 +27,19 @@ export const metadata: Metadata = {
   title: 'Sala do Tempo 21',
   description: '21 dias de execução forçada. Não é conteúdo, é execução guiada.',
   manifest: '/manifest.json',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: ['/favicon.ico'],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -48,10 +61,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className={`${bebasNeue.variable} ${rajdhani.variable} ${shareTechMono.variable}`}>
-      <head>
-        <link rel="icon" href="/icon.svg" />
-        <link rel="apple-touch-icon" href="/icon.svg" />
-      </head>
       <body className={rajdhani.className}>{children}</body>
     </html>
   );
