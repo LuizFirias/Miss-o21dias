@@ -34,7 +34,7 @@ export function useAuth() {
 
   async function loadUser(userId: string) {
     const { data, error } = await supabase
-      .from('users')
+      .from('usuarios')
       .select('*')
       .eq('id', userId)
       .single();

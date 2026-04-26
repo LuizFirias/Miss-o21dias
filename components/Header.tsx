@@ -1,36 +1,65 @@
-import React from 'react';
-import { getNivelProgressao } from '@/utils/helpers';
+'use client';
 
-interface HeaderProps {
-  diaAtual: number;
-  streak: number;
-  nome: string;
-}
+import { motion } from 'framer-motion';
+import { useUserStore } from '@/store/userStore';
 
-export default function Header({ diaAtual, streak, nome }: HeaderProps) {
-  const nivel = getNivelProgressao(diaAtual);
+export default function Header() {
+  const { user } = useUserStore();
 
+  if (!user) return null;
+
+  // Calcula nível baseado no dia atual
+  const nivel = Math.floor(user.dia_atual / 7) + 1;
+  const nivelMax = 3;
+  
   return (
-    <header className="mb-8">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-vermelho">SALA DO TEMPO 21</h1>
+    <motion.header 
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className="bg-cinza-escuro border-b border-cinza-borda px-4 py-3"
+    >
+      <div className="flex items-center justify-between max-w-md mx-auto">
+        {/* Dia Atual */}
+        <div>
+          <div className="font-mono text-[9px] tracking-[3px] text-branco-dim uppercase">
+            Dia Atual
+          </div>
+          <div className="font-display text-2xl tracking-wider text-branco">
+            {user.dia_atual || 1}
+          </div>
+        </div>
+
+        {/* Level Badge */}
+        <div className="flex items-center gap-2 bg-cinza-medio border border-cinza-borda rounded-full px-3 py-1.5">
+          <div className="font-mono text-[8px] tracking-[2px] text-branco-dim uppercase">
+            Nível
+          </div>
+          <div className="flex items-center gap-0.5">
+            {[...Array(nivelMax)].map((_, i) => (
+              <div
+                key={i}
+                className={`w-1.5 h-1.5 rounded-full ${
+                  i < nivel ? 'bg-amarelo' : 'bg-cinza-borda'
+                }`}
+              />
+            ))}
+          </div>
+          <div className="font-display text-sm tracking-wide text-amarelo">
+            {nivel}
+          </div>
+        </div>
+
+        {/* Streak */}
         <div className="text-right">
-          <p className="text-sm text-gray-400">{nome}</p>
-          <p className="text-xs text-amarelo">{nivel}</p>
+          <div className="font-mono text-[9px] tracking-[3px] text-branco-dim uppercase">
+            Streak
+          </div>
+          <div className="font-display text-2xl tracking-wider text-verde">
+            {user.streak || 0}
+            <span className="text-[10px] ml-0.5">🔥</span>
+          </div>
         </div>
       </div>
-      
-      <div className="flex gap-4">
-        <div className="flex-1 bg-gray-900 p-3 rounded border border-gray-800">
-          <p className="text-xs text-gray-400 mb-1">DIA</p>
-          <p className="text-2xl font-bold text-vermelho">{diaAtual}/21</p>
-        </div>
-        
-        <div className="flex-1 bg-gray-900 p-3 rounded border border-gray-800">
-          <p className="text-xs text-gray-400 mb-1">STREAK</p>
-          <p className="text-2xl font-bold text-verde">{streak}</p>
-        </div>
-      </div>
-    </header>
+    </motion.header>
   );
 }

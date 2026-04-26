@@ -3,9 +3,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import Loading from '@/components/Loading';
 
-export default function Home() {
+export default function RootPage() {
   const router = useRouter();
 
   useEffect(() => {
@@ -13,25 +12,40 @@ export default function Home() {
   }, []);
 
   async function checkAuth() {
-    const { data } = await supabase.auth.getSession();
-    
-    if (data.session) {
-      // Verificar se usuário completou onboarding
-      const { data: userData } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', data.session.user.id)
-        .single();
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      
+      if (data.session) {
+        // Usuário já logado - verificar se completou onboarding
+        const { data: userData, error: userError } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('id', data.session.user.id)
+          .single();
 
-      if (userData) {
-        router.push('/home');
+        if (userData?.onboarding_completo) {
+          router.replace('/home');
+        } else {
+          router.replace('/onboarding');
+        }
       } else {
-        router.push('/onboarding');
+        // Sem sessão - redirecionar para página de vendas
+        router.replace('/sales');
       }
-    } else {
-      router.push('/login');
+    } catch (error) {
+      console.error('Erro ao verificar auth:', error);
+      router.replace('/sales');
     }
   }
 
-  return <Loading />;
+  return (
+    <div className="min-h-screen bg-preto flex items-center justify-center">
+      <div className="text-center">
+        <div className="font-mono text-xs text-branco-dim tracking-widest mb-2">
+          SALA DO TEMPO
+        </div>
+        <div className="w-8 h-8 border-2 border-vermelho border-t-transparent rounded-full animate-spin mx-auto" />
+      </div>
+    </div>
+  );
 }

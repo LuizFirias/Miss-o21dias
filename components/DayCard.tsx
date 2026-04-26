@@ -1,30 +1,81 @@
-import React from 'react';
-import { calcularProgresso } from '@/utils/helpers';
+'use client';
+
+import { motion } from 'framer-motion';
 
 interface DayCardProps {
   dia: number;
   nome: string;
-  onClick: () => void;
+  status: 'bloqueado' | 'disponivel' | 'completo' | 'falhou';
+  onClick?: () => void;
 }
 
-export default function DayCard({ dia, nome, onClick }: DayCardProps) {
+export default function DayCard({ dia, nome, status, onClick }: DayCardProps) {
+  const isClickable = status === 'disponivel';
+  const isCurrent = status === 'disponivel';
+
+  const statusConfig = {
+    bloqueado: {
+      bg: 'bg-cinza-escuro',
+      border: 'border-cinza-borda',
+      textColor: 'text-branco-dim',
+      icon: '🔒',
+    },
+    disponivel: {
+      bg: 'bg-cinza-medio',
+      border: 'border-vermelho',
+      textColor: 'text-branco',
+      icon: '▶',
+    },
+    completo: {
+      bg: 'bg-cinza-escuro',
+      border: 'border-verde',
+      textColor: 'text-verde',
+      icon: '✓',
+    },
+    falhou: {
+      bg: 'bg-cinza-escuro',
+      border: 'border-vermelho/30',
+      textColor: 'text-vermelho/50',
+      icon: '✕',
+    },
+  };
+
+  const config = statusConfig[status];
+
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 mb-6">
-      <div className="text-center mb-4">
-        <p className="text-sm text-gray-400 mb-2">DIA {dia.toString().padStart(2, '0')}</p>
-        <h2 className="text-xl font-bold text-vermelho mb-4">{nome}</h2>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      whileHover={isClickable ? { scale: 1.02 } : {}}
+      whileTap={isClickable ? { scale: 0.98 } : {}}
+      onClick={isClickable ? onClick : undefined}
+      className={`
+        ${config.bg} border ${config.border} rounded p-3
+        ${isClickable ? 'cursor-pointer' : 'cursor-default'}
+        ${isCurrent ? 'ring-1 ring-vermelho/30' : ''}
+        transition-all
+      `}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <div className="font-mono text-[9px] tracking-[3px] text-branco-dim uppercase">
+          DIA {dia}
+        </div>
+        <span className={`text-xs ${config.textColor}`}>
+          {config.icon}
+        </span>
       </div>
-      
-      <p className="text-center text-gray-300 mb-6">
-        Você vai executar ou vai falhar hoje?
-      </p>
-      
-      <button
-        onClick={onClick}
-        className="w-full bg-vermelho hover:bg-red-600 text-white font-bold py-4 px-6 rounded-lg transition-colors uppercase tracking-wider"
-      >
-        INICIAR MISSÃO
-      </button>
-    </div>
+
+      <div className={`font-display text-sm tracking-wider ${config.textColor}`}>
+        {nome}
+      </div>
+
+      {status === 'disponivel' && (
+        <div className="mt-2 pt-2 border-t border-cinza-borda">
+          <div className="font-body text-[10px] tracking-wider text-branco-dim uppercase">
+            Toque para iniciar
+          </div>
+        </div>
+      )}
+    </motion.div>
   );
 }

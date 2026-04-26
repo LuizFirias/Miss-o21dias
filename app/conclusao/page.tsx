@@ -2,20 +2,28 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUserStore } from '@/store/userStore';
+import { useAuth } from '@/hooks/useAuth';
 import Layout from '@/components/Layout';
 
 export default function ConclusaoPage() {
   const router = useRouter();
-  const { user } = useUserStore();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       router.push('/home');
     }
-  }, [user]);
+  }, [user, loading, router]);
 
-  if (!user) return null;
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen bg-preto flex items-center justify-center">
+        <div className="font-mono text-branco-dim text-sm tracking-wider">
+          CARREGANDO...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Layout>

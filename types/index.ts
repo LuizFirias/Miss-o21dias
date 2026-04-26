@@ -13,6 +13,13 @@ export interface User {
   streak: number;
   nivel_progressao: number;
   limitacao: Limitacao;
+  onboarding_completo?: boolean;
+  ultimo_acesso_dia?: string;
+  pode_avancar_dia?: boolean;
+  // Order bumps (produtos premium)
+  modo_guerra_acesso?: boolean;
+  continuidade_30dias?: boolean;
+  disparo_rapido_acesso?: boolean;
   created_at: string;
 }
 

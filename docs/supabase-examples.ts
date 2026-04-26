@@ -57,7 +57,7 @@ function escutarAuthChanges() {
 // Criar usuário após onboarding
 async function criarUsuario(userData: any) {
   const { data, error } = await supabase
-    .from('users')
+    .from('usuarios')
     .insert({
       id: userData.id,
       email: userData.email,
@@ -78,7 +78,7 @@ async function criarUsuario(userData: any) {
 // Buscar usuário por ID
 async function buscarUsuario(userId: string) {
   const { data, error } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('*')
     .eq('id', userId)
     .single();
@@ -89,7 +89,7 @@ async function buscarUsuario(userId: string) {
 // Atualizar progresso do usuário
 async function atualizarProgresso(userId: string, updates: any) {
   const { data, error } = await supabase
-    .from('users')
+    .from('usuarios')
     .update({
       dia_atual: updates.dia_atual,
       streak: updates.streak,
@@ -105,7 +105,7 @@ async function atualizarProgresso(userId: string, updates: any) {
 // Resetar usuário (voltar ao dia 1)
 async function resetarUsuario(userId: string) {
   const { data, error } = await supabase
-    .from('users')
+    .from('usuarios')
     .update({
       dia_atual: 1,
       streak: 0,
@@ -188,7 +188,7 @@ async function contarDiasCompletos(userId: string) {
 // Buscar usuários que completaram o desafio
 async function buscarUsuariosElite() {
   const { data, error } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('*')
     .gte('dia_atual', 21);
   
@@ -198,7 +198,7 @@ async function buscarUsuariosElite() {
 // Buscar usuários por nível
 async function buscarUsuariosPorNivel(nivel: 'iniciante' | 'intermediario' | 'avancado') {
   const { data, error } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('*')
     .eq('nivel', nivel);
   
@@ -209,18 +209,18 @@ async function buscarUsuariosPorNivel(nivel: 'iniciante' | 'intermediario' | 'av
 async function buscarEstatisticas() {
   // Total de usuários
   const { count: totalUsuarios } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('*', { count: 'exact', head: true });
   
   // Usuários ativos (dia > 1)
   const { count: usuariosAtivos } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('*', { count: 'exact', head: true })
     .gt('dia_atual', 1);
   
   // Usuários que completaram
   const { count: usuariosCompletos } = await supabase
-    .from('users')
+    .from('usuarios')
     .select('*', { count: 'exact', head: true })
     .gte('dia_atual', 21);
   
@@ -298,7 +298,7 @@ async function fluxoCompletoUsuario() {
 async function exemploComTratamentoDeErros() {
   try {
     const { data, error } = await supabase
-      .from('users')
+      .from('usuarios')
       .select('*')
       .eq('id', 'some-id')
       .single();

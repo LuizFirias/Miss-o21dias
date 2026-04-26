@@ -1,0 +1,18 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="192" height="192" fill="#0D0D0D"/>
+  
+  <!-- Red accent -->
+  <circle cx="96" cy="96" r="70" fill="#FF3B3B" opacity="0.1"/>
+  
+  <!-- ST21 Text -->
+  <text x="96" y="75" font-family="Arial, sans-serif" font-weight="bold" font-size="32" fill="#F5F5F5" text-anchor="middle">
+    SALA
+  </text>
+  <text x="96" y="105" font-family="Arial, sans-serif" font-weight="bold" font-size="32" fill="#FF3B3B" text-anchor="middle">
+    21
+  </text>
+  <text x="96" y="130" font-family="Arial, sans-serif" font-size="14" fill="#AAAAAA" text-anchor="middle">
+    TEMPO
+  </text>
+</svg>
