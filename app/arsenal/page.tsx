@@ -119,6 +119,10 @@ export default function ArsenalPage() {
     if (idx !== activeIndex) setActiveIndex(idx);
   };
 
+  const goPrev = () => scrollToIndex(Math.max(0, activeIndex - 1));
+  const goNext = () =>
+    scrollToIndex(Math.min(ARSENAL_PRODUTOS.length - 1, activeIndex + 1));
+
   if (authLoading || loading) {
     return (
       <Layout>
@@ -152,7 +156,19 @@ export default function ArsenalPage() {
         </motion.div>
 
         {/* Carrossel */}
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto relative">
+          {/* Setas (apenas desktop) */}
+          <CarouselArrow
+            direction="prev"
+            onClick={goPrev}
+            disabled={activeIndex === 0}
+          />
+          <CarouselArrow
+            direction="next"
+            onClick={goNext}
+            disabled={activeIndex >= ARSENAL_PRODUTOS.length - 1}
+          />
+
           <div
             ref={carouselRef}
             onScroll={handleScroll}
@@ -168,7 +184,7 @@ export default function ArsenalPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="snap-center shrink-0 w-[88%] sm:w-[70%]"
+                  className="snap-center shrink-0 w-[78%] sm:w-[58%] md:w-[48%]"
                 >
                   <div
                     className="relative rounded-2xl overflow-hidden border-2 bg-cinza-escuro"
@@ -187,7 +203,7 @@ export default function ArsenalPage() {
                       aria-label={
                         desbloqueado ? `Acessar ${produto.titulo}` : `${produto.titulo} bloqueado`
                       }
-                      className="relative block w-full aspect-[4/5] overflow-hidden"
+                      className="relative block w-full aspect-[9/16] overflow-hidden"
                     >
                       <Image
                         src={produto.capa}
@@ -320,5 +336,43 @@ function CartIcon() {
       <circle cx="20" cy="21" r="1" />
       <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
     </svg>
+  );
+}
+
+function CarouselArrow({
+  direction,
+  onClick,
+  disabled,
+}: {
+  direction: 'prev' | 'next';
+  onClick: () => void;
+  disabled?: boolean;
+}) {
+  const isPrev = direction === 'prev';
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={isPrev ? 'Anterior' : 'Próximo'}
+      className={`hidden md:flex absolute top-1/2 -translate-y-1/2 z-20 items-center justify-center w-11 h-11 rounded-full bg-preto/80 backdrop-blur-sm border border-branco-dim/15 hover:border-laranja/60 hover:bg-preto disabled:opacity-30 disabled:cursor-not-allowed transition-all ${
+        isPrev ? '-left-5' : '-right-5'
+      }`}
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="text-branco"
+        aria-hidden
+      >
+        {isPrev ? <polyline points="15 18 9 12 15 6" /> : <polyline points="9 18 15 12 9 6" />}
+      </svg>
+    </button>
   );
 }
