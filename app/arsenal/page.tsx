@@ -32,8 +32,7 @@ const ARSENAL_PRODUTOS: ArsenalProduct[] = [
     corDestaque: '#FF3B3B',
     rota: '/arsenal/modo-guerra',
     campo: 'modo_guerra_acesso',
-    // TODO: inserir link de checkout do MODO GUERRA
-    checkoutUrl: '',
+    checkoutUrl: 'https://pay.cakto.com.br/jf7hhvw_864215',
   },
   {
     id: 'disparo-rapido',
@@ -261,20 +260,22 @@ export default function ArsenalPage() {
                         </span>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleComprar(produto)}
-                        aria-label={`Comprar ${produto.titulo}`}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg font-display text-sm tracking-[2px] transition-all hover:brightness-110 active:scale-95"
-                        style={{
-                          background: produto.corDestaque,
-                          color: '#0D0D0D',
-                          boxShadow: `0 4px 14px ${produto.corDestaque}40`,
-                        }}
-                      >
-                        <CartIcon />
-                        <span>COMPRAR</span>
-                      </button>
+                      {!desbloqueado && produto.checkoutUrl && (
+                        <button
+                          type="button"
+                          onClick={() => handleComprar(produto)}
+                          aria-label={`Comprar ${produto.titulo}`}
+                          className="flex items-center gap-2 px-4 py-2 rounded-lg font-display text-sm tracking-[2px] transition-all hover:brightness-110 active:scale-95"
+                          style={{
+                            background: produto.corDestaque,
+                            color: '#0D0D0D',
+                            boxShadow: `0 4px 14px ${produto.corDestaque}40`,
+                          }}
+                        >
+                          <CartIcon />
+                          <span>COMPRAR</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 </motion.div>
