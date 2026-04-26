@@ -1,8 +1,15 @@
 'use client';
 
-import { useState, useReducer } from 'react';
+import { useState, useReducer, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+
+const STORAGE_KEY = 'rotina-blindada-state';
+
+function getHojeBrasilia(): string {
+  const hoje = new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' });
+  return new Date(hoje).toISOString().split('T')[0];
+}
 
 /* ─────────────────────────────────────────────
    DATA
@@ -72,7 +79,10 @@ const SCREENS = ['intro', 'manha', 'dia', 'noite', 'checklist'];
    REDUCER
 ───────────────────────────────────────────── */
 type CheckedState = Record<string, boolean>;
-type ChecklistAction = { type: 'TOGGLE'; id: string } | { type: 'RESET' };
+type ChecklistAction =
+  | { type: 'TOGGLE'; id: string }
+  | { type: 'RESET' }
+  | { type: 'HYDRATE'; payload: CheckedState };
 
 function checklistReducer(state: CheckedState, action: ChecklistAction): CheckedState {
   switch (action.type) {
@@ -80,6 +90,8 @@ function checklistReducer(state: CheckedState, action: ChecklistAction): Checked
       return { ...state, [action.id]: !state[action.id] };
     case 'RESET':
       return {};
+    case 'HYDRATE':
+      return action.payload;
     default:
       return state;
   }
@@ -534,14 +546,54 @@ export default function RotinaBlinada() {
   const router = useRouter();
   const [screen, setScreen] = useState('intro');
   const [checked, dispatch] = useReducer(checklistReducer, {});
+  const hydrated = useRef(false);
 
   const sectionScreens = ['manha', 'dia', 'noite'];
   const totalProgress = getTotalProgress(checked);
 
+  // Carrega estado do dia ao montar. Se a data salva não for a de hoje
+  // (Brasília), começa zerado — reset diário automático.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as { date: string; checked: CheckedState };
+        if (parsed && parsed.date === getHojeBrasilia() && parsed.checked) {
+          dispatch({ type: 'HYDRATE', payload: parsed.checked });
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      }
+    } catch {
+      // ignore parse/storage errors
+    } finally {
+      hydrated.current = true;
+    }
+  }, []);
+
+  // Persiste a cada mudança (apenas após hidratação para não sobrescrever
+  // o storage com {} antes de ler).
+  useEffect(() => {
+    if (!hydrated.current) return;
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ date: getHojeBrasilia(), checked }),
+      );
+    } catch {
+      // ignore quota/security errors
+    }
+  }, [checked]);
+
   const handleToggle = (id: string) => dispatch({ type: 'TOGGLE', id });
-  
+
   const handleReset = () => {
     dispatch({ type: 'RESET' });
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore
+    }
     setScreen('intro');
   };
 

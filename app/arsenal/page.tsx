@@ -1,61 +1,64 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 
+type AcessoCampo = 'modo_guerra_acesso' | 'disparo_rapido_acesso';
+
 interface ArsenalProduct {
   id: string;
   titulo: string;
   descricao: string;
-  icone: string;
+  capa: string;
   corDestaque: string;
   rota: string;
-  campo: 'modo_guerra_acesso' | 'continuidade_30dias' | 'disparo_rapido_acesso';
+  campo: AcessoCampo;
+  /** Link de checkout do order bump — preencher depois. */
+  checkoutUrl: string;
 }
 
 const ARSENAL_PRODUTOS: ArsenalProduct[] = [
   {
     id: 'modo-guerra',
-    titulo: 'MODO GUERRA (ACESSO OCULTO)',
-    descricao: 'Missões secretas de elite. Treinos intensificados. Protocolo avançado para quem quer ir além do limite.',
-    icone: '🔥',
+    titulo: 'MODO GUERRA',
+    descricao:
+      'Missões secretas de elite. Treinos intensificados. Protocolo avançado para quem quer ir além do limite.',
+    capa: '/order-bumps/modo-guerra.png',
     corDestaque: '#FF3B3B',
     rota: '/arsenal/modo-guerra',
     campo: 'modo_guerra_acesso',
-  },
-  {
-    id: 'continuidade',
-    titulo: 'Continuidade (30 dias extras)',
-    descricao: 'Estenda sua jornada com 30 dias adicionais de missões exclusivas para consolidação total dos hábitos.',
-    icone: '⏰',
-    corDestaque: '#00C853',
-    rota: '/arsenal/continuidade',
-    campo: 'continuidade_30dias',
+    // TODO: inserir link de checkout do MODO GUERRA
+    checkoutUrl: '',
   },
   {
     id: 'disparo-rapido',
-    titulo: 'Disparo Rápido: Sistema de execução imediata',
-    descricao: 'Framework completo para transformar qualquer ideia em ação em menos de 24 horas. Zero procrastinação.',
-    icone: '⚡',
+    titulo: 'DISPARO RÁPIDO',
+    descricao:
+      'Framework completo para transformar qualquer ideia em ação em menos de 24 horas. Zero procrastinação.',
+    capa: '/order-bumps/disparo-rapido.png',
     corDestaque: '#FFC857',
     rota: '/arsenal/disparo-rapido',
     campo: 'disparo_rapido_acesso',
+    // TODO: inserir link de checkout do DISPARO RÁPIDO
+    checkoutUrl: '',
   },
 ];
 
 export default function ArsenalPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
-  const [acessos, setAcessos] = useState<Record<string, boolean>>({
+  const [acessos, setAcessos] = useState<Record<AcessoCampo, boolean>>({
     modo_guerra_acesso: false,
-    continuidade_30dias: false,
     disparo_rapido_acesso: false,
   });
   const [loading, setLoading] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -64,12 +67,11 @@ export default function ArsenalPage() {
       return;
     }
 
-    // Carregar status de acesso
     const carregarAcessos = async () => {
       try {
         const { data, error } = await supabase
           .from('usuarios')
-          .select('modo_guerra_acesso, continuidade_30dias, disparo_rapido_acesso')
+          .select('modo_guerra_acesso, disparo_rapido_acesso')
           .eq('id', user.id)
           .single();
 
@@ -77,7 +79,6 @@ export default function ArsenalPage() {
 
         setAcessos({
           modo_guerra_acesso: data.modo_guerra_acesso || false,
-          continuidade_30dias: data.continuidade_30dias || false,
           disparo_rapido_acesso: data.disparo_rapido_acesso || false,
         });
       } catch (error) {
@@ -90,11 +91,32 @@ export default function ArsenalPage() {
     carregarAcessos();
   }, [user, authLoading, router]);
 
-  const handleProductClick = (produto: ArsenalProduct) => {
-    const temAcesso = acessos[produto.campo];
-    if (temAcesso) {
+  const handleAcessar = (produto: ArsenalProduct) => {
+    if (acessos[produto.campo]) {
       router.push(produto.rota);
     }
+  };
+
+  const handleComprar = (produto: ArsenalProduct) => {
+    if (!produto.checkoutUrl) return;
+    window.open(produto.checkoutUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  const scrollToIndex = (index: number) => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const card = el.children[index] as HTMLElement | undefined;
+    if (card) {
+      el.scrollTo({ left: card.offsetLeft - el.offsetLeft, behavior: 'smooth' });
+    }
+  };
+
+  const handleScroll = () => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const cardWidth = (el.firstChild as HTMLElement)?.offsetWidth || 1;
+    const idx = Math.round(el.scrollLeft / cardWidth);
+    if (idx !== activeIndex) setActiveIndex(idx);
   };
 
   if (authLoading || loading) {
@@ -114,7 +136,7 @@ export default function ArsenalPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-10"
         >
           <div className="font-mono text-[9px] tracking-[3px] text-laranja uppercase mb-2">
             Acesso Premium
@@ -129,92 +151,138 @@ export default function ArsenalPage() {
           </p>
         </motion.div>
 
-        {/* Lista de Produtos */}
-        <div className="max-w-2xl mx-auto space-y-6">
-          {ARSENAL_PRODUTOS.map((produto, index) => {
-            const temAcesso = acessos[produto.campo];
-            const isLocked = !temAcesso;
+        {/* Carrossel */}
+        <div className="max-w-2xl mx-auto">
+          <div
+            ref={carouselRef}
+            onScroll={handleScroll}
+            className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 -mx-4 px-4 scrollbar-hide"
+            style={{ scrollbarWidth: 'none' }}
+          >
+            {ARSENAL_PRODUTOS.map((produto, index) => {
+              const desbloqueado = acessos[produto.campo];
 
-            return (
-              <motion.div
-                key={produto.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <div
-                  onClick={() => handleProductClick(produto)}
-                  className={`
-                    relative overflow-hidden rounded-lg border-2 p-6
-                    ${isLocked 
-                      ? 'border-cinza-borda bg-cinza-escuro/30 cursor-not-allowed' 
-                      : 'border-transparent bg-cinza-escuro cursor-pointer hover:scale-[1.02] transition-transform'
-                    }
-                  `}
-                  style={{
-                    borderColor: isLocked ? undefined : `${produto.corDestaque}40`,
-                  }}
+              return (
+                <motion.div
+                  key={produto.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="snap-center shrink-0 w-[88%] sm:w-[70%]"
                 >
-                  {/* Glow effect se desbloqueado */}
-                  {!isLocked && (
-                    <div
-                      className="absolute inset-0 opacity-5"
-                      style={{
-                        background: `radial-gradient(circle at top right, ${produto.corDestaque}, transparent)`,
-                      }}
-                    />
-                  )}
-
-                  <div className="relative z-10 flex items-start gap-4">
-                    {/* Ícone */}
-                    <div 
-                      className={`text-4xl ${isLocked ? 'grayscale opacity-30' : ''}`}
+                  <div
+                    className="relative rounded-2xl overflow-hidden border-2 bg-cinza-escuro"
+                    style={{
+                      borderColor: desbloqueado ? `${produto.corDestaque}60` : 'rgba(255,255,255,0.06)',
+                      boxShadow: desbloqueado
+                        ? `0 0 24px ${produto.corDestaque}22`
+                        : 'none',
+                    }}
+                  >
+                    {/* Capa */}
+                    <button
+                      type="button"
+                      onClick={() => handleAcessar(produto)}
+                      disabled={!desbloqueado}
+                      aria-label={
+                        desbloqueado ? `Acessar ${produto.titulo}` : `${produto.titulo} bloqueado`
+                      }
+                      className="relative block w-full aspect-[4/5] overflow-hidden"
                     >
-                      {isLocked ? '🔒' : produto.icone}
-                    </div>
+                      <Image
+                        src={produto.capa}
+                        alt={produto.titulo}
+                        fill
+                        sizes="(max-width: 640px) 88vw, 480px"
+                        className={`object-cover transition-all ${
+                          desbloqueado ? 'opacity-100' : 'opacity-50 grayscale'
+                        }`}
+                        priority={index === 0}
+                      />
 
-                    {/* Conteúdo */}
-                    <div className="flex-1">
-                      <h3 
-                        className="font-display text-2xl tracking-wider mb-2"
-                        style={{
-                          color: isLocked ? '#555' : produto.corDestaque,
-                        }}
-                      >
-                        {produto.titulo}
-                      </h3>
-                      <p className={`font-body text-sm leading-relaxed mb-4 ${isLocked ? 'text-branco-dim/30' : 'text-branco-dim/70'}`}>
-                        {produto.descricao}
-                      </p>
-
-                      {/* Status */}
-                      {isLocked ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-cinza-borda" />
-                          <span className="font-mono text-[10px] tracking-[2px] text-branco-dim/40 uppercase">
-                            Bloqueado • Requer Order Bump
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-2 h-2 rounded-full"
-                            style={{ backgroundColor: produto.corDestaque }}
-                          />
-                          <span 
-                            className="font-mono text-[10px] tracking-[2px] uppercase font-semibold"
-                            style={{ color: produto.corDestaque }}
-                          >
-                            Acessar →
+                      {/* Overlay de bloqueio */}
+                      {!desbloqueado && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-preto/55 backdrop-blur-[2px]">
+                          <div className="text-5xl mb-2">🔒</div>
+                          <span className="font-mono text-[10px] tracking-[3px] text-branco/80 uppercase">
+                            Bloqueado
                           </span>
                         </div>
                       )}
+
+                      {/* Gradiente inferior + título */}
+                      <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-preto via-preto/70 to-transparent">
+                        <h3
+                          className="font-display text-2xl tracking-[3px] leading-tight"
+                          style={{
+                            color: desbloqueado ? produto.corDestaque : '#888',
+                          }}
+                        >
+                          {produto.titulo}
+                        </h3>
+                        <p className="font-body text-xs text-branco-dim/70 mt-1 line-clamp-2">
+                          {produto.descricao}
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* Rodapé: status + botão de carrinho */}
+                    <div className="flex items-center gap-3 p-4 border-t border-branco/5 bg-preto/40">
+                      <div className="flex-1 flex items-center gap-2">
+                        <div
+                          className="w-2 h-2 rounded-full"
+                          style={{
+                            backgroundColor: desbloqueado ? produto.corDestaque : '#444',
+                          }}
+                        />
+                        <span
+                          className="font-mono text-[10px] tracking-[2px] uppercase"
+                          style={{
+                            color: desbloqueado ? produto.corDestaque : 'rgba(255,255,255,0.4)',
+                          }}
+                        >
+                          {desbloqueado ? 'Desbloqueado' : 'Requer compra'}
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleComprar(produto)}
+                        aria-label={`Comprar ${produto.titulo}`}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg font-display text-sm tracking-[2px] transition-all hover:brightness-110 active:scale-95"
+                        style={{
+                          background: produto.corDestaque,
+                          color: '#0D0D0D',
+                          boxShadow: `0 4px 14px ${produto.corDestaque}40`,
+                        }}
+                      >
+                        <CartIcon />
+                        <span>COMPRAR</span>
+                      </button>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            );
-          })}
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Indicadores */}
+          <div className="flex justify-center gap-2 mt-4">
+            {ARSENAL_PRODUTOS.map((produto, idx) => (
+              <button
+                key={produto.id}
+                type="button"
+                onClick={() => scrollToIndex(idx)}
+                aria-label={`Ir para ${produto.titulo}`}
+                className="h-[3px] rounded-full transition-all"
+                style={{
+                  width: idx === activeIndex ? '24px' : '12px',
+                  background:
+                    idx === activeIndex ? produto.corDestaque : 'rgba(255,255,255,0.15)',
+                }}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Info sobre como desbloquear */}
@@ -229,17 +297,28 @@ export default function ArsenalPage() {
               ℹ️ Como Desbloquear
             </div>
             <p className="font-body text-sm text-branco-dim/60 leading-relaxed">
-              Os produtos do Arsenal Avançado são desbloqueados através da aquisição dos 
+              Os produtos do Arsenal Avançado são desbloqueados através da aquisição dos
               <span className="text-branco font-semibold"> order bumps </span>
               durante o processo de checkout da Missão 21 Dias.
-              <br /><br />
-              Caso você adquiriu algum produto e não está vendo aqui, entre em contato 
-              com o suporte através de 
+              <br />
+              <br />
+              Caso você adquiriu algum produto e não está vendo aqui, entre em contato com o
+              suporte através de
               <span className="text-branco font-semibold"> contato@saladotempo.site</span>.
             </p>
           </div>
         </motion.div>
       </div>
     </Layout>
+  );
+}
+
+function CartIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="9" cy="21" r="1" />
+      <circle cx="20" cy="21" r="1" />
+      <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
+    </svg>
   );
 }
