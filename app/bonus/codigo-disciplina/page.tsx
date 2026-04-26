@@ -172,6 +172,7 @@ function Header({ onClose }: { onClose: () => void }) {
 
       <button
         onClick={onClose}
+        aria-label="Sair para bônus"
         style={{
           background: "none",
           border: "1px solid rgba(255,255,255,0.1)",
@@ -179,8 +180,22 @@ function Header({ onClose }: { onClose: () => void }) {
           padding: "6px 10px",
           cursor: "pointer",
           lineHeight: 1,
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
         }}
       >
+        <span
+          style={{
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: "9px",
+            letterSpacing: "2px",
+            color: "rgba(255,255,255,0.5)",
+            textTransform: "uppercase",
+          }}
+        >
+          SAIR
+        </span>
         <span
           style={{
             fontFamily: "'Share Tech Mono', monospace",

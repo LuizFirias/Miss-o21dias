@@ -579,13 +579,23 @@ export default function RotinaBlinada() {
       
       <div className="bg-preto min-h-screen max-w-[430px] mx-auto relative overflow-hidden">
         {/* Ambient glow */}
-        <div 
+        <div
           className="fixed -top-20 -left-20 w-72 h-72 pointer-events-none"
           style={{
             background: 'radial-gradient(circle, rgba(255,59,59,0.06) 0%, transparent 70%)',
             zIndex: 0,
           }}
         />
+
+        {/* Sair → /bonus */}
+        <button
+          onClick={() => router.push('/bonus')}
+          aria-label="Sair para bônus"
+          className="fixed top-4 right-4 z-50 flex items-center gap-1.5 bg-preto/70 backdrop-blur-sm border border-branco-dim/15 hover:border-vermelho/60 rounded-full px-3 py-1.5 transition-all"
+        >
+          <span className="font-mono text-[9px] tracking-[2px] text-branco-dim uppercase">SAIR</span>
+          <span className="text-branco-dim text-sm leading-none">✕</span>
+        </button>
 
         <NavDots screens={SCREENS} current={screen} />
 
