@@ -43,8 +43,7 @@ const ARSENAL_PRODUTOS: ArsenalProduct[] = [
     corDestaque: '#FFC857',
     rota: '/arsenal/disparo-rapido',
     campo: 'disparo_rapido_acesso',
-    // TODO: inserir link de checkout do DISPARO RÁPIDO
-    checkoutUrl: '',
+    checkoutUrl: 'https://pay.cakto.com.br/g87mkhc_864283',
   },
 ];
 
