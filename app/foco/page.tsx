@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Layout from '@/components/Layout';
@@ -8,126 +8,135 @@ import Loading from '@/components/Loading';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 
-type TabKey = 'foco' | 'audio';
+type TabKey = 'videos' | 'audios';
 
 interface MidiaItem {
   id: string;
   titulo: string;
-  /** Duração em formato livre (ex: "3 min", "lo-fi 2h"). */
+  /** Duração em formato livre (ex: "3 min", "1h 20"). */
   duracao: string;
+  /** ID do vídeo no YouTube (ex: dQw4w9WgXcQ). Preencher conforme os links chegarem. */
+  youtubeId: string;
 }
 
 interface Categoria {
   id: string;
   label: string;
-  icone: string;
   uso: string;
   cor: string;
   itens: MidiaItem[];
 }
 
-const PLAYLISTS_FOCO: Categoria[] = [
+/* ─────────────────────────────────────────────
+   LINKS — placeholders para preenchimento futuro
+───────────────────────────────────────────── */
+
+// TODO: link da playlist Spotify do TRAINING
+const SPOTIFY_TRAINING_URL = '';
+
+// TODO: link de checkout do acesso completo da biblioteca FOCO
+const CHECKOUT_FOCO_COMPLETO = '';
+
+/* ─────────────────────────────────────────────
+   VÍDEOS (YouTube) — preencher youtubeId quando os
+   links chegarem. O resto do app já reage à mudança.
+───────────────────────────────────────────── */
+
+const VIDEOS: Categoria[] = [
   {
-    id: 'execucao',
-    label: 'EXECUÇÃO',
-    icone: '🔥',
-    uso: 'Antes de agir',
-    cor: '#FF3B3B',
+    id: 'foco',
+    label: 'FOCO',
+    uso: 'Para entrar em estado de execução',
+    cor: '#5B8CFF',
     itens: [
-      { id: 'exec-1', titulo: 'Faça agora — 90 segundos', duracao: '1 min' },
-      { id: 'exec-2', titulo: 'Sem desculpa. Sem pausa.', duracao: '3 min' },
-      { id: 'exec-3', titulo: 'Levanta. Move.', duracao: '2 min' },
-      { id: 'exec-4', titulo: 'Modo soldado', duracao: '5 min' },
+      { id: 'foco-1', titulo: 'Vídeo 1', duracao: '—', youtubeId: '' },
+      { id: 'foco-2', titulo: 'Vídeo 2', duracao: '—', youtubeId: '' },
+      { id: 'foco-3', titulo: 'Vídeo 3', duracao: '—', youtubeId: '' },
+      { id: 'foco-4', titulo: 'Vídeo 4', duracao: '—', youtubeId: '' },
     ],
   },
   {
-    id: 'concentracao',
+    id: 'rotina',
+    label: 'ROTINA',
+    uso: 'Estrutura do dia',
+    cor: '#FF8C42',
+    itens: [
+      { id: 'rotina-1', titulo: 'Vídeo 1', duracao: '—', youtubeId: '' },
+      { id: 'rotina-2', titulo: 'Vídeo 2', duracao: '—', youtubeId: '' },
+      { id: 'rotina-3', titulo: 'Vídeo 3', duracao: '—', youtubeId: '' },
+    ],
+  },
+  {
+    id: 'leitura',
+    label: 'LEITURA',
+    uso: 'Hábito de ler diariamente',
+    cor: '#FFC857',
+    itens: [
+      { id: 'leitura-1', titulo: 'Vídeo 1', duracao: '—', youtubeId: '' },
+      { id: 'leitura-2', titulo: 'Vídeo 2', duracao: '—', youtubeId: '' },
+      { id: 'leitura-3', titulo: 'Vídeo 3', duracao: '—', youtubeId: '' },
+    ],
+  },
+  {
+    id: 'dinheiro',
+    label: 'DINHEIRO',
+    uso: 'Mentalidade financeira',
+    cor: '#00C853',
+    itens: [
+      { id: 'dinheiro-1', titulo: 'Vídeo 1', duracao: '—', youtubeId: '' },
+      { id: 'dinheiro-2', titulo: 'Vídeo 2', duracao: '—', youtubeId: '' },
+      { id: 'dinheiro-3', titulo: 'Vídeo 3', duracao: '—', youtubeId: '' },
+    ],
+  },
+  {
+    id: 'renda-extra',
+    label: 'RENDA EXTRA',
+    uso: 'Caminhos de execução',
+    cor: '#FF3B3B',
+    itens: [
+      { id: 'renda-1', titulo: 'Vídeo 1', duracao: '—', youtubeId: '' },
+      { id: 'renda-2', titulo: 'Vídeo 2', duracao: '—', youtubeId: '' },
+      { id: 'renda-3', titulo: 'Vídeo 3', duracao: '—', youtubeId: '' },
+    ],
+  },
+];
+
+const AUDIOS: Categoria[] = [
+  {
+    id: 'audio-concentracao',
     label: 'CONCENTRAÇÃO',
-    icone: '🧠',
     uso: 'Durante tarefas',
     cor: '#5B8CFF',
     itens: [
-      { id: 'conc-1', titulo: 'Lo-fi monk — sessão profunda', duracao: '45 min' },
-      { id: 'conc-2', titulo: 'Foco binaural 40Hz', duracao: '60 min' },
-      { id: 'conc-3', titulo: 'Trilha de estudo silenciosa', duracao: '90 min' },
-      { id: 'conc-4', titulo: 'Deep work loop', duracao: '2h' },
+      { id: 'aconc-1', titulo: 'Áudio 1', duracao: '—', youtubeId: '' },
+      { id: 'aconc-2', titulo: 'Áudio 2', duracao: '—', youtubeId: '' },
+      { id: 'aconc-3', titulo: 'Áudio 3', duracao: '—', youtubeId: '' },
     ],
   },
   {
-    id: 'pressao',
-    label: 'PRESSÃO',
-    icone: '🏋️',
-    uso: 'Quando estiver cansado',
-    cor: '#FF8C42',
+    id: 'audio-leitura',
+    label: 'LEITURA',
+    uso: 'Trilha sonora para leitura',
+    cor: '#FFC857',
     itens: [
-      { id: 'press-1', titulo: 'Sai do chão — superação', duracao: '4 min' },
-      { id: 'press-2', titulo: 'Treino sem desculpa', duracao: '6 min' },
-      { id: 'press-3', titulo: 'Mais um round', duracao: '5 min' },
-      { id: 'press-4', titulo: 'Modo guerreiro', duracao: '7 min' },
-    ],
-  },
-  {
-    id: 'reset',
-    label: 'RESET',
-    icone: '📖',
-    uso: 'Quando estiver sobrecarregado',
-    cor: '#00C853',
-    itens: [
-      { id: 'reset-1', titulo: 'Respira. Reorganiza.', duracao: '5 min' },
-      { id: 'reset-2', titulo: 'Pausa consciente', duracao: '8 min' },
-      { id: 'reset-3', titulo: 'Reflexão leve', duracao: '6 min' },
+      { id: 'aleit-1', titulo: 'Áudio 1', duracao: '—', youtubeId: '' },
+      { id: 'aleit-2', titulo: 'Áudio 2', duracao: '—', youtubeId: '' },
+      { id: 'aleit-3', titulo: 'Áudio 3', duracao: '—', youtubeId: '' },
     ],
   },
 ];
 
-const PLAYLISTS_AUDIO: Categoria[] = [
-  {
-    id: 'modo-foco',
-    label: 'MODO FOCO',
-    icone: '🔊',
-    uso: 'Ruído branco · chuva · ambiente',
-    cor: '#5B8CFF',
-    itens: [
-      { id: 'mf-1', titulo: 'Chuva fina contínua', duracao: '60 min' },
-      { id: 'mf-2', titulo: 'Ruído branco neutro', duracao: '90 min' },
-      { id: 'mf-3', titulo: 'Café silencioso', duracao: '2h' },
-    ],
-  },
-  {
-    id: 'modo-intenso',
-    label: 'MODO INTENSO',
-    icone: '🔊',
-    uso: 'Batidas · som energético',
-    cor: '#FF3B3B',
-    itens: [
-      { id: 'mi-1', titulo: 'Tambor de execução', duracao: '20 min' },
-      { id: 'mi-2', titulo: 'Pulso 120 BPM', duracao: '35 min' },
-      { id: 'mi-3', titulo: 'Batida de guerra', duracao: '40 min' },
-    ],
-  },
-  {
-    id: 'silencio-guiado',
-    label: 'MODO SILÊNCIO GUIADO',
-    icone: '🔊',
-    uso: 'Quase nada — leve ambiência',
-    cor: '#AAAAAA',
-    itens: [
-      { id: 'sg-1', titulo: 'Vento distante', duracao: '30 min' },
-      { id: 'sg-2', titulo: 'Sala vazia', duracao: '60 min' },
-      { id: 'sg-3', titulo: 'Quase silêncio', duracao: '45 min' },
-    ],
-  },
-];
-
-// TODO: substituir pelo link real de checkout do acesso completo FOCO
-const CHECKOUT_FOCO_COMPLETO = '';
+/* ─────────────────────────────────────────────
+   PÁGINA
+───────────────────────────────────────────── */
 
 export default function FocoPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
-  const [tab, setTab] = useState<TabKey>('foco');
+  const [tab, setTab] = useState<TabKey>('videos');
   const [acessoCompleto, setAcessoCompleto] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [playing, setPlaying] = useState<MidiaItem | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -143,12 +152,10 @@ export default function FocoPage() {
           .select('foco_acesso')
           .eq('id', user.id)
           .single();
-
         if (error) throw error;
         setAcessoCompleto(Boolean(data?.foco_acesso));
       } catch (err) {
-        // Campo pode ainda não existir no banco antes da migração rodar.
-        // Tratar como sem acesso (libera só o item grátis por categoria).
+        // Campo pode ainda não existir antes da migração rodar.
         console.warn('foco_acesso indisponível:', err);
         setAcessoCompleto(false);
       } finally {
@@ -163,18 +170,24 @@ export default function FocoPage() {
     return <Loading />;
   }
 
-  const playlists = tab === 'foco' ? PLAYLISTS_FOCO : PLAYLISTS_AUDIO;
-  const primeiraCategoria = playlists[0];
-  const itemDestaque = primeiraCategoria?.itens[0];
+  const categorias = tab === 'videos' ? VIDEOS : AUDIOS;
 
   const handleLiberarAcesso = () => {
     if (!CHECKOUT_FOCO_COMPLETO) return;
     window.open(CHECKOUT_FOCO_COMPLETO, '_blank', 'noopener,noreferrer');
   };
 
-  const handlePlay = (categoria: Categoria, item: MidiaItem) => {
-    // TODO: integrar player real (vídeo/áudio)
-    console.log('▶️ play', categoria.id, item.id);
+  const handleAbrirSpotify = () => {
+    if (!SPOTIFY_TRAINING_URL) return;
+    window.open(SPOTIFY_TRAINING_URL, '_blank', 'noopener,noreferrer');
+  };
+
+  const handlePlay = (item: MidiaItem) => {
+    if (!item.youtubeId) {
+      // sem link ainda — não abrir player vazio
+      return;
+    }
+    setPlaying(item);
   };
 
   return (
@@ -189,64 +202,54 @@ export default function FocoPage() {
           <div className="font-mono text-[9px] tracking-[3px] text-azul-mente uppercase mb-1">
             Estado mental
           </div>
-          <h1 className="font-display text-4xl tracking-[3px] text-branco">
-            FOCO
-          </h1>
+          <h1 className="font-display text-4xl tracking-[3px] text-branco">FOCO</h1>
           <p className="font-body text-sm text-branco-dim/60 mt-2">
             Tira você da inércia. Sem pensar.
           </p>
         </motion.div>
 
-        {/* Tabs */}
-        <div className="flex items-center gap-2 mb-8 border-b border-cinza-borda">
-          <TabButton
-            active={tab === 'foco'}
-            onClick={() => setTab('foco')}
-            cor="#5B8CFF"
-          >
-            📲 FOCO
-          </TabButton>
-          <TabButton
-            active={tab === 'audio'}
-            onClick={() => setTab('audio')}
-            cor="#FFC857"
-          >
-            ⚔️ ÁUDIO
-          </TabButton>
-        </div>
-
-        {/* Botão prioridade — apenas na aba FOCO */}
-        {tab === 'foco' && itemDestaque && (
-          <motion.button
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            onClick={() => handlePlay(primeiraCategoria, itemDestaque)}
-            className="w-full mb-10 group relative overflow-hidden rounded-xl border-2 border-vermelho/40 bg-gradient-to-br from-vermelho/15 to-preto p-6 text-left hover:border-vermelho/80 transition-all"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-vermelho flex items-center justify-center shrink-0 shadow-[0_0_24px_rgba(255,59,59,0.4)]">
-                <PlayIcon size={22} />
+        {/* TRAINING — hero card que leva para o Spotify */}
+        <motion.button
+          type="button"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          onClick={handleAbrirSpotify}
+          disabled={!SPOTIFY_TRAINING_URL}
+          className="w-full mb-10 group relative overflow-hidden rounded-xl border-2 border-azul-mente/40 bg-gradient-to-br from-azul-mente/15 to-preto p-6 text-left hover:border-azul-mente/80 transition-all disabled:cursor-not-allowed"
+          style={{ boxShadow: '0 0 18px rgba(91,140,255,0.18)' }}
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-azul-mente flex items-center justify-center shrink-0 shadow-[0_0_24px_rgba(91,140,255,0.45)]">
+              <SpotifyIcon size={26} />
+            </div>
+            <div className="flex-1">
+              <div className="font-mono text-[9px] tracking-[3px] text-azul-mente uppercase mb-1">
+                Prioridade · Spotify
               </div>
-              <div className="flex-1">
-                <div className="font-mono text-[9px] tracking-[3px] text-vermelho uppercase mb-1">
-                  Prioridade
-                </div>
-                <div className="font-display text-3xl tracking-[3px] text-branco leading-none">
-                  COMEÇAR AGORA
-                </div>
-                <div className="font-body text-xs text-branco-dim/70 mt-2">
-                  Vídeo automático + som leve. Tira da inércia em segundos.
-                </div>
+              <div className="font-display text-3xl tracking-[3px] text-branco leading-none">
+                TRAINING
+              </div>
+              <div className="font-body text-xs text-branco-dim/70 mt-2">
+                Playlist contínua para entrar em estado. Abre direto no Spotify.
               </div>
             </div>
-          </motion.button>
-        )}
+            <ExternalLinkIcon />
+          </div>
+          {!SPOTIFY_TRAINING_URL && (
+            <div className="absolute top-3 right-3 font-mono text-[8px] tracking-[2px] text-branco-dim/50 uppercase">
+              Em breve
+            </div>
+          )}
+        </motion.button>
 
-        {/* Sub-título */}
-        <div className="font-mono text-[9px] tracking-[3px] uppercase mb-5"
-          style={{ color: tab === 'foco' ? '#5B8CFF' : '#FFC857' }}
-        >
-          {tab === 'foco' ? 'Playlists por estado' : 'Modos de áudio'}
+        {/* Tabs */}
+        <div className="flex items-center gap-2 mb-8 border-b border-cinza-borda">
+          <TabButton active={tab === 'videos'} onClick={() => setTab('videos')} cor="#5B8CFF">
+            🎬 VÍDEOS
+          </TabButton>
+          <TabButton active={tab === 'audios'} onClick={() => setTab('audios')} cor="#FFC857">
+            🎧 ÁUDIOS
+          </TabButton>
         </div>
 
         {/* Categorias */}
@@ -259,8 +262,8 @@ export default function FocoPage() {
             transition={{ duration: 0.2 }}
             className="space-y-10"
           >
-            {playlists.map((cat) => (
-              <Categoria
+            {categorias.map((cat) => (
+              <CategoriaBlock
                 key={cat.id}
                 categoria={cat}
                 acessoCompleto={acessoCompleto}
@@ -309,7 +312,193 @@ export default function FocoPage() {
           </motion.div>
         )}
       </div>
+
+      {/* Player YouTube */}
+      <YouTubePlayerModal
+        item={playing}
+        onClose={() => setPlaying(null)}
+      />
     </Layout>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   YOUTUBE PLAYER (modal embutido no app)
+───────────────────────────────────────────── */
+
+function YouTubePlayerModal({
+  item,
+  onClose,
+}: {
+  item: MidiaItem | null;
+  onClose: () => void;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Fecha com ESC
+  useEffect(() => {
+    if (!item) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [item, onClose]);
+
+  // Trava o scroll do body enquanto o player está aberto
+  useEffect(() => {
+    if (!item) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [item]);
+
+  const handleFullscreen = () => {
+    const el = containerRef.current;
+    if (!el) return;
+    const doc = document as Document & {
+      webkitFullscreenElement?: Element;
+      webkitExitFullscreen?: () => Promise<void>;
+    };
+    const fsEl = el as HTMLDivElement & {
+      webkitRequestFullscreen?: () => Promise<void>;
+    };
+    const isFullscreen = Boolean(document.fullscreenElement || doc.webkitFullscreenElement);
+    if (isFullscreen) {
+      (document.exitFullscreen?.() ?? doc.webkitExitFullscreen?.())?.catch(() => {});
+    } else {
+      (fsEl.requestFullscreen?.() ?? fsEl.webkitRequestFullscreen?.())?.catch(() => {});
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {item && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-preto/90 backdrop-blur-sm p-4"
+          onClick={onClose}
+        >
+          <motion.div
+            ref={containerRef}
+            initial={{ scale: 0.96 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.96 }}
+            transition={{ duration: 0.18 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-5xl"
+            style={{
+              border: '1px solid rgba(91,140,255,0.45)',
+              borderRadius: '12px',
+              boxShadow:
+                '0 0 14px rgba(91,140,255,0.25), 0 0 38px rgba(91,140,255,0.15), inset 0 0 0 1px rgba(91,140,255,0.06)',
+              background: '#0D0D0D',
+            }}
+          >
+            {/* Top bar */}
+            <div className="flex items-center justify-between p-3 border-b border-azul-mente/20">
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Voltar"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-azul-mente/10 transition-colors"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-branco"
+                  aria-hidden
+                >
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+                <span className="font-mono text-[10px] tracking-[2px] text-branco-dim uppercase">
+                  Voltar
+                </span>
+              </button>
+
+              <div className="flex-1 mx-3 truncate text-center">
+                <span className="font-display text-sm tracking-[2px] text-branco">
+                  {item.titulo}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={handleFullscreen}
+                  aria-label="Tela cheia"
+                  className="p-2 rounded-md hover:bg-azul-mente/10 transition-colors"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-branco"
+                    aria-hidden
+                  >
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+                    <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+                    <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+                    <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label="Sair"
+                  className="p-2 rounded-md hover:bg-azul-mente/10 transition-colors"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-branco"
+                    aria-hidden
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Iframe */}
+            <div className="aspect-video w-full bg-preto">
+              <iframe
+                key={item.id}
+                src={`https://www.youtube.com/embed/${item.youtubeId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+                title={item.titulo}
+                className="w-full h-full"
+                frameBorder={0}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                allowFullScreen
+              />
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -347,7 +536,7 @@ function TabButton({
   );
 }
 
-function Categoria({
+function CategoriaBlock({
   categoria,
   acessoCompleto,
   onPlay,
@@ -356,22 +545,19 @@ function Categoria({
 }: {
   categoria: Categoria;
   acessoCompleto: boolean;
-  onPlay: (cat: Categoria, item: MidiaItem) => void;
+  onPlay: (item: MidiaItem) => void;
   onLiberar: () => void;
   checkoutDisponivel: boolean;
 }) {
   return (
     <div>
       <div className="flex items-baseline justify-between mb-3">
-        <div className="flex items-baseline gap-2">
-          <span className="text-xl">{categoria.icone}</span>
-          <h2
-            className="font-display text-2xl tracking-[3px]"
-            style={{ color: categoria.cor }}
-          >
-            {categoria.label}
-          </h2>
-        </div>
+        <h2
+          className="font-display text-2xl tracking-[3px]"
+          style={{ color: categoria.cor }}
+        >
+          {categoria.label}
+        </h2>
         <span className="font-mono text-[8px] tracking-[2px] text-branco-dim/50 uppercase">
           {categoria.uso}
         </span>
@@ -386,7 +572,7 @@ function Categoria({
               item={item}
               liberado={liberado}
               cor={categoria.cor}
-              onPlay={() => onPlay(categoria, item)}
+              onPlay={() => onPlay(item)}
               onLiberar={onLiberar}
               checkoutDisponivel={checkoutDisponivel}
             />
@@ -413,11 +599,13 @@ function ItemCard({
   checkoutDisponivel: boolean;
 }) {
   if (liberado) {
+    const sem_link = !item.youtubeId;
     return (
       <button
         type="button"
         onClick={onPlay}
-        className="group relative flex items-center gap-3 p-4 rounded-lg border bg-cinza-escuro hover:bg-cinza-medio transition-all text-left"
+        disabled={sem_link}
+        className="group relative flex items-center gap-3 p-4 rounded-lg border bg-cinza-escuro hover:bg-cinza-medio transition-all text-left disabled:opacity-60 disabled:cursor-not-allowed"
         style={{ borderColor: `${cor}33` }}
       >
         <div
@@ -432,6 +620,7 @@ function ItemCard({
           </div>
           <div className="font-mono text-[9px] tracking-[2px] text-branco-dim/50 uppercase mt-0.5">
             {item.duracao}
+            {sem_link && ' · em breve'}
           </div>
         </div>
       </button>
@@ -442,7 +631,6 @@ function ItemCard({
     <div
       className="relative flex items-center gap-3 p-4 rounded-lg border border-cinza-borda bg-cinza-escuro/40 overflow-hidden"
     >
-      {/* Conteúdo borrado */}
       <div className="flex items-center gap-3 flex-1 opacity-30 blur-[1px] pointer-events-none">
         <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 bg-cinza-borda">
           <PlayIcon size={16} />
@@ -457,7 +645,6 @@ function ItemCard({
         </div>
       </div>
 
-      {/* Overlay de bloqueio */}
       <div className="absolute inset-0 flex items-center gap-3 px-4 bg-preto/65 backdrop-blur-[1px]">
         <div className="text-xl">🔒</div>
         <div className="flex-1 min-w-0">
@@ -473,10 +660,7 @@ function ItemCard({
           }}
           disabled={!checkoutDisponivel}
           className="shrink-0 font-mono text-[9px] tracking-[2px] uppercase px-3 py-1.5 rounded border transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-          style={{
-            color: cor,
-            borderColor: `${cor}66`,
-          }}
+          style={{ color: cor, borderColor: `${cor}66` }}
         >
           Liberar
         </button>
@@ -487,13 +671,7 @@ function ItemCard({
 
 function PlayIcon({ size = 16 }: { size?: number }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="#0D0D0D"
-      aria-hidden
-    >
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="#0D0D0D" aria-hidden>
       <path d="M8 5v14l11-7z" />
     </svg>
   );
@@ -515,6 +693,35 @@ function CartIcon() {
       <circle cx="9" cy="21" r="1" />
       <circle cx="20" cy="21" r="1" />
       <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
+    </svg>
+  );
+}
+
+function SpotifyIcon({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="#0D0D0D" aria-hidden>
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.59 14.41c-.2.31-.6.41-.91.21-2.49-1.52-5.62-1.86-9.31-1.02-.36.08-.72-.14-.8-.5-.08-.36.14-.72.5-.8 4.04-.92 7.51-.53 10.31 1.18.31.2.41.61.21.93zm1.22-2.71c-.25.39-.76.51-1.15.26-2.85-1.75-7.19-2.26-10.56-1.24-.43.13-.89-.11-1.02-.55-.13-.43.11-.89.55-1.02 3.85-1.17 8.65-.6 11.92 1.4.39.25.51.76.26 1.15zm.11-2.83C14.55 8.84 8.7 8.62 5.43 9.62c-.51.16-1.06-.13-1.22-.65-.16-.51.13-1.06.65-1.22 3.78-1.15 10.25-.93 14.27 1.46.46.27.61.86.34 1.32-.27.46-.86.61-1.32.34z" />
+    </svg>
+  );
+}
+
+function ExternalLinkIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="text-azul-mente shrink-0"
+      aria-hidden
+    >
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+      <polyline points="15 3 21 3 21 9" />
+      <line x1="10" y1="14" x2="21" y2="3" />
     </svg>
   );
 }
