@@ -13,6 +13,11 @@ import DayCompletionModal from '@/components/DayCompletionModal';
 import Modal from '@/components/Modal';
 import Loading from '@/components/Loading';
 
+function getHojeBrasilia(): string {
+  const hoje = new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' });
+  return new Date(hoje).toISOString().split('T')[0];
+}
+
 export default function MissaoPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
@@ -49,34 +54,50 @@ export default function MissaoPage() {
     // Verificar se é um novo dia e se pode avançar
     await verificarAvancoDia();
 
-    // Verificar se já existe progresso salvo para o dia atual
+    // Data de hoje em horário de Brasília — só carrega progresso desta data,
+    // para que tentativas de dias anteriores (mesmo no mesmo "dia" da jornada)
+    // não vazem para a UI do dia atual.
+    const hojeBrasilia = getHojeBrasilia();
+
     const { data: progressoExistente } = await supabase
       .from('progresso_dia')
       .select('*')
       .eq('user_id', user.id)
       .eq('dia', user.dia_atual)
+      .eq('data', hojeBrasilia)
       .order('created_at', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (progressoExistente) {
       setProgressoId(progressoExistente.id);
       setDiaFinalizado(true);
-      
+
       // Reconstruir estado baseado nas missões completadas
       setMissaoStatus({
-        corpo: { 
-          completed: progressoExistente.corpo_completo || false, 
-          failed: !progressoExistente.corpo_completo 
+        corpo: {
+          completed: progressoExistente.corpo_completo || false,
+          failed: !progressoExistente.corpo_completo,
         },
-        mente: { 
-          completed: progressoExistente.mente_completo || false, 
-          failed: !progressoExistente.mente_completo 
+        mente: {
+          completed: progressoExistente.mente_completo || false,
+          failed: !progressoExistente.mente_completo,
         },
-        disciplina: { 
-          completed: progressoExistente.disciplina_completo || false, 
-          failed: !progressoExistente.disciplina_completo 
+        disciplina: {
+          completed: progressoExistente.disciplina_completo || false,
+          failed: !progressoExistente.disciplina_completo,
         },
+      });
+    } else {
+      // Sem progresso para hoje — começar do zero (resolve o caso de
+      // ter marcado parcialmente no dia anterior e o dia ter virado
+      // sem completar 2 missões).
+      setProgressoId(null);
+      setDiaFinalizado(false);
+      setMissaoStatus({
+        corpo: { completed: false, failed: false },
+        mente: { completed: false, failed: false },
+        disciplina: { completed: false, failed: false },
       });
     }
   }
@@ -85,9 +106,7 @@ export default function MissaoPage() {
     if (!user) return;
 
     try {
-      // Pegar data de hoje em horário de Brasília
-      const hoje = new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' });
-      const hojeBrasilia = new Date(hoje).toISOString().split('T')[0];
+      const hojeBrasilia = getHojeBrasilia();
 
       // Pegar último acesso do usuário
       const { data: userData } = await supabase
@@ -215,10 +234,11 @@ export default function MissaoPage() {
           corpo_completo: missaoStatus.corpo.completed,
           mente_completo: missaoStatus.mente.completed,
           disciplina_completo: missaoStatus.disciplina.completed,
+          data: getHojeBrasilia(),
         })
         .select()
         .single();
-      
+
       if (data) {
         setProgressoId(data.id);
       }
@@ -314,20 +334,21 @@ export default function MissaoPage() {
             corpo_completo: missaoStatus.corpo.completed,
             mente_completo: missaoStatus.mente.completed,
             disciplina_completo: missaoStatus.disciplina.completed,
+            data: getHojeBrasilia(),
           })
           .select()
           .single();
-        
+
         if (data) {
           setProgressoId(data.id);
         }
       }
 
-      // Atualizar último acesso
+      // Atualizar último acesso (mesma referência de fuso usada em verificarAvancoDia)
       await supabase
         .from('usuarios')
         .update({
-          ultimo_acesso_dia: new Date().toISOString().split('T')[0],
+          ultimo_acesso_dia: getHojeBrasilia(),
         })
         .eq('id', user.id);
 
