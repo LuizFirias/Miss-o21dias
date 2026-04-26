@@ -25,6 +25,12 @@ interface Categoria {
   uso: string;
   cor: string;
   itens: MidiaItem[];
+  /**
+   * Se preenchido, todos os itens da categoria são liberados após X dias
+   * desde a compra (usuarios.created_at). Sem o campo, o desbloqueio do
+   * resto da categoria depende exclusivamente de foco_acesso.
+   */
+  daysToUnlockAll?: number;
 }
 
 /* ─────────────────────────────────────────────
@@ -43,6 +49,75 @@ const CHECKOUT_FOCO_COMPLETO = '';
 ───────────────────────────────────────────── */
 
 const VIDEOS: Categoria[] = [
+  {
+    id: 'produtividade',
+    label: 'PRODUTIVIDADE',
+    uso: 'Vídeo 1 livre · resto após 7 dias da compra',
+    cor: '#B452FF',
+    daysToUnlockAll: 7,
+    itens: [
+      {
+        id: 'prod-1',
+        titulo: 'GESTÃO DO TEMPO — uma aula de 5 minutos que vai mudar sua produtividade',
+        duracao: '5 min',
+        youtubeId: 'imzy7Gld4qQ',
+      },
+      {
+        id: 'prod-2',
+        titulo: 'Como parar de PROCRASTINAR?',
+        duracao: '—',
+        youtubeId: 'WIS3PzNJEdU',
+      },
+      {
+        id: 'prod-3',
+        titulo: 'PRODUTIVIDADE: As técnicas poderosas que você não está usando',
+        duracao: '—',
+        youtubeId: 'CocYznzG7vc',
+      },
+      {
+        id: 'prod-4',
+        titulo: 'Como criar hábitos produtivos e saudáveis?',
+        duracao: '—',
+        youtubeId: 'smoFiKzFsqQ',
+      },
+      {
+        id: 'prod-5',
+        titulo: 'O jeito mais fácil para se organizar e ser produtivo',
+        duracao: '—',
+        youtubeId: 'DIg_lvsnvxE',
+      },
+      {
+        id: 'prod-6',
+        titulo: 'Como organizar tarefas por contexto para aumentar sua produtividade',
+        duracao: '—',
+        youtubeId: 'xW3aSkRfRxI',
+      },
+      {
+        id: 'prod-7',
+        titulo: 'Como eu organizo o meu dia para ser mais produtivo',
+        duracao: '—',
+        youtubeId: 'bTTY4D4sgKM',
+      },
+      {
+        id: 'prod-8',
+        titulo: 'Como ter mais FOCO e ser mais PRODUTIVO',
+        duracao: '—',
+        youtubeId: 'DEx6fevGXlM',
+      },
+      {
+        id: 'prod-9',
+        titulo: 'Técnica Pomodoro: o que é, como estudar e os benefícios',
+        duracao: '—',
+        youtubeId: 'PdRUpaheIhE',
+      },
+      {
+        id: 'prod-10',
+        titulo: 'Método GTD na prática: como tirar as ideias da cabeça',
+        duracao: '—',
+        youtubeId: 'slBrquJyKs8',
+      },
+    ],
+  },
   {
     id: 'foco',
     label: 'FOCO',
@@ -171,6 +246,9 @@ export default function FocoPage() {
   }
 
   const categorias = tab === 'videos' ? VIDEOS : AUDIOS;
+  const daysSincePurchase = user.created_at
+    ? Math.floor((Date.now() - new Date(user.created_at).getTime()) / 86400000)
+    : 0;
 
   const handleLiberarAcesso = () => {
     if (!CHECKOUT_FOCO_COMPLETO) return;
@@ -267,6 +345,7 @@ export default function FocoPage() {
                 key={cat.id}
                 categoria={cat}
                 acessoCompleto={acessoCompleto}
+                daysSincePurchase={daysSincePurchase}
                 onPlay={handlePlay}
                 onLiberar={handleLiberarAcesso}
                 checkoutDisponivel={Boolean(CHECKOUT_FOCO_COMPLETO)}
@@ -539,16 +618,33 @@ function TabButton({
 function CategoriaBlock({
   categoria,
   acessoCompleto,
+  daysSincePurchase,
   onPlay,
   onLiberar,
   checkoutDisponivel,
 }: {
   categoria: Categoria;
   acessoCompleto: boolean;
+  daysSincePurchase: number;
   onPlay: (item: MidiaItem) => void;
   onLiberar: () => void;
   checkoutDisponivel: boolean;
 }) {
+  // Categoria com drip (ex: PRODUTIVIDADE) libera tudo após X dias da compra.
+  const dripUnlocked =
+    typeof categoria.daysToUnlockAll === 'number' &&
+    daysSincePurchase >= categoria.daysToUnlockAll;
+  const restoLiberado = acessoCompleto || dripUnlocked;
+
+  let lockReason = 'Biblioteca completa disponível';
+  if (typeof categoria.daysToUnlockAll === 'number' && !restoLiberado) {
+    const faltam = Math.max(0, categoria.daysToUnlockAll - daysSincePurchase);
+    lockReason =
+      faltam > 0
+        ? `Disponível em ${faltam} dia${faltam > 1 ? 's' : ''}`
+        : 'Liberando em instantes';
+  }
+
   return (
     <div>
       <div className="flex items-baseline justify-between mb-3">
@@ -565,13 +661,14 @@ function CategoriaBlock({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {categoria.itens.map((item, idx) => {
-          const liberado = acessoCompleto || idx === 0;
+          const liberado = idx === 0 || restoLiberado;
           return (
             <ItemCard
               key={item.id}
               item={item}
               liberado={liberado}
               cor={categoria.cor}
+              lockReason={lockReason}
               onPlay={() => onPlay(item)}
               onLiberar={onLiberar}
               checkoutDisponivel={checkoutDisponivel}
@@ -587,6 +684,7 @@ function ItemCard({
   item,
   liberado,
   cor,
+  lockReason,
   onPlay,
   onLiberar,
   checkoutDisponivel,
@@ -594,6 +692,7 @@ function ItemCard({
   item: MidiaItem;
   liberado: boolean;
   cor: string;
+  lockReason: string;
   onPlay: () => void;
   onLiberar: () => void;
   checkoutDisponivel: boolean;
@@ -649,7 +748,7 @@ function ItemCard({
         <div className="text-xl">🔒</div>
         <div className="flex-1 min-w-0">
           <div className="font-mono text-[9px] tracking-[2px] text-branco/85 uppercase truncate">
-            Biblioteca completa disponível
+            {lockReason}
           </div>
         </div>
         <button
