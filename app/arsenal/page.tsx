@@ -25,7 +25,7 @@ interface ArsenalProduct {
 const ARSENAL_PRODUTOS: ArsenalProduct[] = [
   {
     id: 'modo-guerra',
-    titulo: 'MODO GUERRA',
+    titulo: 'MODO GUERRA (Sem reset livre)',
     descricao:
       'Missões secretas de elite. Treinos intensificados. Protocolo avançado para quem quer ir além do limite.',
     capa: '/order-bumps/modo-guerra.png',

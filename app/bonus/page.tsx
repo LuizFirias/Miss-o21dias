@@ -22,12 +22,11 @@ interface Bonus {
 const BONUS_DATA: Bonus[] = [
   {
     id: 'rotina-blindada',
-    titulo: 'Rotina Blindada',
+    titulo: 'Plano Diário',
     subtitulo: 'Protocolo Diário de Alta Performance',
     rota: '/bonus/rotina-blindada',
     diaDesbloqueio: 1,
-    // TODO: adicionar capa em /public/bonus-covers/rotina-blindada.png (9:16)
-    capa: '/bonus-covers/rotina-blindada.png',
+    capa: '/bonus-covers/plano-diario.png',
     corDestaque: '#FF3B3B',
   },
   {
@@ -36,7 +35,6 @@ const BONUS_DATA: Bonus[] = [
     subtitulo: 'Recuperação de Controle',
     rota: '/bonus/protocolo-anti-vicio',
     diaDesbloqueio: 7,
-    // TODO: adicionar capa em /public/bonus-covers/protocolo-anti-vicio.png (9:16)
     capa: '/bonus-covers/protocolo-anti-vicio.png',
     corDestaque: '#FFC857',
   },
@@ -46,7 +44,6 @@ const BONUS_DATA: Bonus[] = [
     subtitulo: 'Fundamentos de Execução',
     rota: '/bonus/codigo-disciplina',
     diaDesbloqueio: 14,
-    // TODO: adicionar capa em /public/bonus-covers/codigo-disciplina.png (9:16)
     capa: '/bonus-covers/codigo-disciplina.png',
     corDestaque: '#5B8CFF',
   },
@@ -56,7 +53,6 @@ const BONUS_DATA: Bonus[] = [
     subtitulo: 'Comunidade de Guerreiros',
     rota: '/bonus/grupo-whatsapp',
     diaDesbloqueio: 21,
-    // TODO: adicionar capa em /public/bonus-covers/grupo-whatsapp.png (9:16)
     capa: '/bonus-covers/grupo-whatsapp.png',
     corDestaque: '#00C853',
   },

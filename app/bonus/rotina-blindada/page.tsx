@@ -208,9 +208,9 @@ function ScreenIntro({ onStart }: { onStart: () => void }) {
         </div>
 
         <h1 className="font-display text-5xl tracking-wider leading-none text-branco mb-2">
-          ROTINA
+          PLANO
           <br />
-          <span className="text-vermelho">BLINDADA</span>
+          <span className="text-vermelho">DIÁRIO</span>
         </h1>
 
         <p className="font-mono text-[10px] tracking-[3px] text-branco-dim uppercase mb-8">

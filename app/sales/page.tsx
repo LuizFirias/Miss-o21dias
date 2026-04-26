@@ -897,7 +897,7 @@ function BonusSection() {
     {
       num: '01',
       dia: 1,
-      titulo: 'Rotina Blindada',
+      titulo: 'Plano Diário',
       sub: 'Protocolo Diário de Alta Performance',
       desc: 'Checklist interativa com 18 itens divididos em Manhã, Dia e Noite. Plug and play. Você executa, o sistema registra.',
       color: '#FF3B3B',
