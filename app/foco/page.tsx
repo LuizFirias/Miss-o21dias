@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Layout from '@/components/Layout';
 import Loading from '@/components/Loading';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/lib/supabase';
 
 type TabKey = 'videos' | 'audios';
 
@@ -26,9 +25,8 @@ interface Categoria {
   cor: string;
   itens: MidiaItem[];
   /**
-   * Se preenchido, todos os itens da categoria são liberados após X dias
-   * desde a compra (usuarios.created_at). Sem o campo, o desbloqueio do
-   * resto da categoria depende exclusivamente de foco_acesso.
+   * Após X dias desde a compra (usuarios.created_at) todos os itens da
+   * categoria são liberados. O primeiro item já vem livre desde o dia 1.
    */
   daysToUnlockAll?: number;
 }
@@ -39,9 +37,6 @@ interface Categoria {
 
 // TODO: link da playlist Spotify do TRAINING
 const SPOTIFY_TRAINING_URL = '';
-
-// TODO: link de checkout do acesso completo da biblioteca FOCO
-const CHECKOUT_FOCO_COMPLETO = '';
 
 /* ─────────────────────────────────────────────
    VÍDEOS (YouTube) — preencher youtubeId quando os
@@ -429,39 +424,16 @@ export default function FocoPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [tab, setTab] = useState<TabKey>('videos');
-  const [acessoCompleto, setAcessoCompleto] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [playing, setPlaying] = useState<MidiaItem | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
     if (!user) {
       router.push('/login');
-      return;
     }
-
-    const carregar = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('usuarios')
-          .select('foco_acesso')
-          .eq('id', user.id)
-          .single();
-        if (error) throw error;
-        setAcessoCompleto(Boolean(data?.foco_acesso));
-      } catch (err) {
-        // Campo pode ainda não existir antes da migração rodar.
-        console.warn('foco_acesso indisponível:', err);
-        setAcessoCompleto(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    carregar();
   }, [user, authLoading, router]);
 
-  if (authLoading || loading || !user) {
+  if (authLoading || !user) {
     return <Loading />;
   }
 
@@ -469,11 +441,6 @@ export default function FocoPage() {
   const daysSincePurchase = user.created_at
     ? Math.floor((Date.now() - new Date(user.created_at).getTime()) / 86400000)
     : 0;
-
-  const handleLiberarAcesso = () => {
-    if (!CHECKOUT_FOCO_COMPLETO) return;
-    window.open(CHECKOUT_FOCO_COMPLETO, '_blank', 'noopener,noreferrer');
-  };
 
   const handleAbrirSpotify = () => {
     if (!SPOTIFY_TRAINING_URL) return;
@@ -564,52 +531,12 @@ export default function FocoPage() {
               <CategoriaBlock
                 key={cat.id}
                 categoria={cat}
-                acessoCompleto={acessoCompleto}
                 daysSincePurchase={daysSincePurchase}
                 onPlay={handlePlay}
-                onLiberar={handleLiberarAcesso}
-                checkoutDisponivel={Boolean(CHECKOUT_FOCO_COMPLETO)}
               />
             ))}
           </motion.div>
         </AnimatePresence>
-
-        {!acessoCompleto && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mt-12"
-          >
-            <div className="bg-cinza-escuro/40 border border-azul-mente/20 rounded-lg p-6 text-center">
-              <div className="font-mono text-[9px] tracking-[3px] text-azul-mente uppercase mb-2">
-                Acesso Limitado
-              </div>
-              <h3 className="font-display text-2xl tracking-[2px] text-branco mb-2">
-                Biblioteca completa disponível
-              </h3>
-              <p className="font-body text-sm text-branco-dim/60 mb-5">
-                Você está com 1 item liberado por categoria. Desbloqueie todos os vídeos e
-                áudios para usar no momento certo.
-              </p>
-              <button
-                type="button"
-                onClick={handleLiberarAcesso}
-                disabled={!CHECKOUT_FOCO_COMPLETO}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-display text-sm tracking-[3px] bg-azul-mente text-preto hover:brightness-110 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ boxShadow: '0 4px 14px rgba(91,140,255,0.4)' }}
-              >
-                <CartIcon />
-                LIBERAR ACESSO COMPLETO
-              </button>
-              {!CHECKOUT_FOCO_COMPLETO && (
-                <div className="font-mono text-[8px] tracking-[2px] text-branco-dim/40 uppercase mt-3">
-                  Em breve
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
       </div>
 
       {/* Player YouTube */}
@@ -837,33 +764,25 @@ function TabButton({
 
 function CategoriaBlock({
   categoria,
-  acessoCompleto,
   daysSincePurchase,
   onPlay,
-  onLiberar,
-  checkoutDisponivel,
 }: {
   categoria: Categoria;
-  acessoCompleto: boolean;
   daysSincePurchase: number;
   onPlay: (item: MidiaItem) => void;
-  onLiberar: () => void;
-  checkoutDisponivel: boolean;
 }) {
-  // Categoria com drip (ex: PRODUTIVIDADE) libera tudo após X dias da compra.
-  const dripUnlocked =
+  const restoLiberado =
     typeof categoria.daysToUnlockAll === 'number' &&
     daysSincePurchase >= categoria.daysToUnlockAll;
-  const restoLiberado = acessoCompleto || dripUnlocked;
 
-  let lockReason = 'Biblioteca completa disponível';
-  if (typeof categoria.daysToUnlockAll === 'number' && !restoLiberado) {
-    const faltam = Math.max(0, categoria.daysToUnlockAll - daysSincePurchase);
-    lockReason =
-      faltam > 0
-        ? `Disponível em ${faltam} dia${faltam > 1 ? 's' : ''}`
-        : 'Liberando em instantes';
-  }
+  const faltam =
+    typeof categoria.daysToUnlockAll === 'number'
+      ? Math.max(0, categoria.daysToUnlockAll - daysSincePurchase)
+      : 0;
+  const lockReason =
+    faltam > 0
+      ? `Disponível em ${faltam} dia${faltam > 1 ? 's' : ''}`
+      : 'Liberando em instantes';
 
   return (
     <div>
@@ -890,8 +809,6 @@ function CategoriaBlock({
               cor={categoria.cor}
               lockReason={lockReason}
               onPlay={() => onPlay(item)}
-              onLiberar={onLiberar}
-              checkoutDisponivel={checkoutDisponivel}
             />
           );
         })}
@@ -906,16 +823,12 @@ function ItemCard({
   cor,
   lockReason,
   onPlay,
-  onLiberar,
-  checkoutDisponivel,
 }: {
   item: MidiaItem;
   liberado: boolean;
   cor: string;
   lockReason: string;
   onPlay: () => void;
-  onLiberar: () => void;
-  checkoutDisponivel: boolean;
 }) {
   if (liberado) {
     const sem_link = !item.youtubeId;
@@ -967,22 +880,10 @@ function ItemCard({
       <div className="absolute inset-0 flex items-center gap-3 px-4 bg-preto/65 backdrop-blur-[1px]">
         <div className="text-xl">🔒</div>
         <div className="flex-1 min-w-0">
-          <div className="font-mono text-[9px] tracking-[2px] text-branco/85 uppercase truncate">
+          <div className="font-mono text-[9px] tracking-[2px] uppercase truncate" style={{ color: cor }}>
             {lockReason}
           </div>
         </div>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onLiberar();
-          }}
-          disabled={!checkoutDisponivel}
-          className="shrink-0 font-mono text-[9px] tracking-[2px] uppercase px-3 py-1.5 rounded border transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-          style={{ color: cor, borderColor: `${cor}66` }}
-        >
-          Liberar
-        </button>
       </div>
     </div>
   );
@@ -992,26 +893,6 @@ function PlayIcon({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="#0D0D0D" aria-hidden>
       <path d="M8 5v14l11-7z" />
-    </svg>
-  );
-}
-
-function CartIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <circle cx="9" cy="21" r="1" />
-      <circle cx="20" cy="21" r="1" />
-      <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
     </svg>
   );
 }
