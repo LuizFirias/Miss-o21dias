@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 
 /* ══════════════════════════════════════════════════
@@ -892,125 +893,597 @@ function MissionsSection() {
 /* ══════════════════════════════════════════════════
    SECTION: BONUS
 ══════════════════════════════════════════════════ */
-function BonusSection() {
-  const bonuses = [
-    {
-      num: '01',
-      dia: 1,
-      titulo: 'Plano Diário',
-      sub: 'Protocolo Diário de Alta Performance',
-      desc: 'Checklist interativa com 18 itens divididos em Manhã, Dia e Noite. Plug and play. Você executa, o sistema registra.',
-      color: '#FF3B3B',
-      icon: '🔥',
-    },
-    {
-      num: '02',
-      dia: 7,
-      titulo: 'Protocolo Anti-Vício',
-      sub: 'Corte de Estímulo e Recuperação de Controle',
-      desc: 'Sistema de ação imediata para parar com pornografia, apostas e redes sociais. Bloquear acesso, mudar ambiente, substituir comportamento.',
-      color: '#5B8CFF',
-      icon: '🧊',
-    },
-    {
-      num: '03',
-      dia: 14,
-      titulo: 'Código da Disciplina Militar',
-      sub: 'Fundamentos de Execução',
-      desc: 'Flow de 12 telas com princípios militares de execução. Leitura em 3 minutos. Impacto que fica.',
-      color: '#00C853',
-      icon: '⚔',
-    },
-    {
-      num: '04',
-      dia: 21,
-      titulo: 'Grupo WhatsApp Exclusivo',
-      sub: 'Comunidade de Guerreiros',
-      desc: 'Acesso ao grupo exclusivo de quem completou os 21 dias. Accountability real. Sem fraqueza.',
-      color: '#FFC857',
-      icon: '👑',
-    },
+function BonusPhoneMockup({ capa, label, color }: { capa?: string; label?: string; color: string }) {
+  return (
+    <div
+      style={{
+        width: '210px',
+        height: '420px',
+        borderRadius: '32px',
+        border: '2px solid rgba(255,255,255,0.12)',
+        background: '#0a0a0a',
+        overflow: 'hidden',
+        position: 'relative',
+        boxShadow: `0 32px 64px rgba(0,0,0,0.6), 0 0 24px ${color}26, 0 0 0 1px rgba(255,255,255,0.04)`,
+        flexShrink: 0,
+      }}
+      className="scan-line"
+    >
+      {/* Notch */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '70px',
+          height: '18px',
+          background: '#0a0a0a',
+          borderRadius: '0 0 12px 12px',
+          zIndex: 10,
+        }}
+      />
+      {/* Capa do bônus em proporção 9:16 ocupando a tela inteira do mockup */}
+      {capa && (
+        <Image
+          src={capa}
+          alt={label ?? 'Capa do bônus'}
+          fill
+          sizes="220px"
+          style={{ objectFit: 'cover' }}
+          priority={false}
+        />
+      )}
+      {/* Noise overlay sutil */}
+      <div className="noise" style={{ position: 'absolute', inset: 0, zIndex: 5, opacity: 0.4 }} />
+      {/* Glow inferior na cor do bônus */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: `linear-gradient(to top, ${color}30 0%, transparent 35%)`,
+          zIndex: 6,
+          pointerEvents: 'none',
+        }}
+      />
+    </div>
+  );
+}
+
+function FocoMockup() {
+  // Mini representação da página /foco — dá noção visual do volume sem
+  // depender de uma capa única.
+  const blocos: Array<{ label: string; color: string }> = [
+    { label: 'FOCO E PRODUTIVIDADE', color: '#B452FF' },
+    { label: 'ROTINA', color: '#FF8C42' },
+    { label: 'LEITURA', color: '#FFC857' },
+    { label: 'DINHEIRO', color: '#00C853' },
+    { label: 'RENDA EXTRA', color: '#FF3B3B' },
   ];
 
   return (
-    <section style={{ padding: '80px 24px', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(255,200,87,0.04) 0%, transparent 70%)', pointerEvents: 'none' }} />
+    <div
+      style={{
+        width: '210px',
+        height: '420px',
+        borderRadius: '32px',
+        border: '2px solid rgba(91,140,255,0.35)',
+        background: '#0a0a0a',
+        overflow: 'hidden',
+        position: 'relative',
+        boxShadow:
+          '0 32px 64px rgba(0,0,0,0.6), 0 0 28px rgba(91,140,255,0.25), 0 0 0 1px rgba(91,140,255,0.08)',
+        flexShrink: 0,
+      }}
+      className="scan-line"
+    >
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '70px',
+          height: '18px',
+          background: '#0a0a0a',
+          borderRadius: '0 0 12px 12px',
+          zIndex: 10,
+        }}
+      />
+      <div className="noise" style={{ position: 'absolute', inset: 0, zIndex: 5, opacity: 0.3 }} />
 
-      <div style={{ maxWidth: '900px', margin: '0 auto', position: 'relative' }}>
-        <Reveal>
-          <Tag color="yellow">BÔNUS INCLUSOS</Tag>
-          <h2
-            className="font-display"
-            style={{ fontSize: 'clamp(34px, 6vw, 60px)', letterSpacing: '4px', color: '#F5F5F5', margin: '16px 0 12px' }}
+      <div style={{ padding: '28px 14px 14px', height: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+          <div className="font-mono-t" style={{ fontSize: '6px', letterSpacing: '2px', color: '#5B8CFF' }}>
+            ESTADO MENTAL
+          </div>
+          <div className="font-display" style={{ fontSize: '11px', letterSpacing: '2px', color: '#F5F5F5' }}>
+            FOCO
+          </div>
+        </div>
+
+        {/* TRAINING card */}
+        <div
+          style={{
+            border: '1px solid rgba(91,140,255,0.4)',
+            borderRadius: '8px',
+            padding: '8px 10px',
+            background: 'linear-gradient(135deg, rgba(91,140,255,0.18), transparent)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+          }}
+        >
+          <div
+            style={{
+              width: '20px',
+              height: '20px',
+              borderRadius: '50%',
+              background: '#5B8CFF',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '10px',
+            }}
           >
-            4 BÔNUS QUE<br />
-            <span style={{ color: '#FFC857' }}>VOCÊ DESBLOQUEIA</span>
-          </h2>
-          <p style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '17px', fontWeight: 500, color: '#888', marginBottom: '48px', maxWidth: '520px', lineHeight: 1.6 }}>
-            Não são brindes. São ferramentas desbloqueadas conforme você avança — porque você precisa merecer.
-          </p>
-        </Reveal>
+            ▶
+          </div>
+          <div style={{ flex: 1 }}>
+            <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '2px', color: '#5B8CFF' }}>
+              SPOTIFY · PRIORIDADE
+            </div>
+            <div className="font-display" style={{ fontSize: '11px', letterSpacing: '2px', color: '#F5F5F5' }}>
+              TRAINING
+            </div>
+          </div>
+        </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {bonuses.map((b, i) => (
-            <Reveal key={b.num} delay={i * 0.08}>
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '4px' }}>
+          <span className="font-display" style={{ fontSize: '8px', letterSpacing: '2px', color: '#5B8CFF', borderBottom: '1px solid #5B8CFF', paddingBottom: '2px' }}>
+            🎬 VÍDEOS
+          </span>
+          <span className="font-display" style={{ fontSize: '8px', letterSpacing: '2px', color: 'rgba(255,255,255,0.35)' }}>
+            🎧 ÁUDIOS
+          </span>
+        </div>
+
+        {/* Categorias */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+          {blocos.map((b) => (
+            <div
+              key={b.label}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '4px 6px',
+                borderRadius: '4px',
+                background: 'rgba(255,255,255,0.03)',
+                borderLeft: `2px solid ${b.color}`,
+              }}
+            >
               <div
                 style={{
-                  padding: '24px',
-                  background: '#0f0f0f',
-                  border: '1px solid rgba(255,255,255,0.06)',
-                  borderLeft: `4px solid ${b.color}`,
-                  borderRadius: '8px',
-                  display: 'flex',
-                  gap: '20px',
-                  alignItems: 'flex-start',
-                  flexWrap: 'wrap',
+                  width: '14px',
+                  height: '14px',
+                  borderRadius: '3px',
+                  background: `${b.color}30`,
+                  border: `1px solid ${b.color}55`,
                 }}
-              >
-                <div style={{ flexShrink: 0 }}>
-                  <div
-                    style={{
-                      width: '56px',
-                      height: '56px',
-                      borderRadius: '8px',
-                      background: `${b.color}15`,
-                      border: `1px solid ${b.color}30`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '24px',
-                    }}
-                  >
-                    {b.icon}
-                  </div>
-                </div>
-
-                <div style={{ flex: 1, minWidth: '200px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px', flexWrap: 'wrap' }}>
-                    <span className="font-mono-t" style={{ fontSize: '8px', letterSpacing: '2px', color: b.color }}>BÔNUS {b.num}</span>
-                    <span
-                      style={{
-                        fontFamily: 'Share Tech Mono, monospace',
-                        fontSize: '8px',
-                        letterSpacing: '2px',
-                        color: '#444',
-                        background: '#1a1a1a',
-                        border: '1px solid rgba(255,255,255,0.06)',
-                        borderRadius: '3px',
-                        padding: '2px 8px',
-                      }}
-                    >
-                      LIBERA DIA {b.dia}
-                    </span>
-                  </div>
-                  <h3 className="font-display" style={{ fontSize: '22px', letterSpacing: '2px', color: '#F5F5F5', marginBottom: '4px' }}>{b.titulo}</h3>
-                  <div className="font-mono-t" style={{ fontSize: '8px', letterSpacing: '2px', color: '#555', marginBottom: '10px', textTransform: 'uppercase' }}>{b.sub}</div>
-                  <p style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '14px', fontWeight: 500, color: '#777', lineHeight: 1.6 }}>{b.desc}</p>
-                </div>
-              </div>
-            </Reveal>
+              />
+              <span className="font-display" style={{ fontSize: '7px', letterSpacing: '2px', color: '#ccc' }}>
+                {b.label}
+              </span>
+              <span className="font-mono-t" style={{ marginLeft: 'auto', fontSize: '6px', color: 'rgba(255,255,255,0.35)' }}>
+                10
+              </span>
+            </div>
           ))}
         </div>
+
+        {/* Footer */}
+        <div
+          style={{
+            borderTop: '1px solid rgba(91,140,255,0.15)',
+            paddingTop: '6px',
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div>
+            <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '2px', color: 'rgba(255,255,255,0.35)' }}>
+              VÍDEOS
+            </div>
+            <div className="font-display" style={{ fontSize: '14px', letterSpacing: '1px', color: '#5B8CFF' }}>
+              50+
+            </div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '2px', color: 'rgba(255,255,255,0.35)' }}>
+              ÁUDIOS
+            </div>
+            <div className="font-display" style={{ fontSize: '14px', letterSpacing: '1px', color: '#FFC857' }}>
+              MODOS
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BonusSection() {
+  const bonuses: Array<{
+    num: string;
+    dia: string;
+    titulo: string;
+    sub: string;
+    desc: string;
+    bullets: string[];
+    valor: string;
+    color: string;
+    capa?: string;
+    custom?: 'foco';
+  }> = [
+    {
+      num: '01',
+      dia: 'DIA 1',
+      titulo: 'Plano Diário',
+      sub: 'Protocolo Diário de Alta Performance',
+      desc:
+        'A checklist que substitui a sua "vontade" por um sistema. Você abre, marca, executa. Sem decidir nada.',
+      bullets: [
+        '18 itens em Manhã, Dia e Noite',
+        'Auto-save a cada toque — zero atrito',
+        'Reset automático na virada do dia',
+      ],
+      valor: 'R$ 97',
+      color: '#FF3B3B',
+      capa: '/bonus-covers/plano-diario.png',
+    },
+    {
+      num: '02',
+      dia: 'DIA 7',
+      titulo: 'Protocolo Anti-Vício',
+      sub: 'Corte de Estímulo e Recuperação de Controle',
+      desc:
+        'Para quem perdeu controle com pornografia, apostas, redes sociais ou qualquer dopamina barata. Não é palestra. É plano de bloqueio.',
+      bullets: [
+        'Bloqueio técnico (apps, redes, CPF em apostas)',
+        'Mudança de ambiente — onde você cai mais',
+        'Plano de substituição em vez de força de vontade',
+      ],
+      valor: 'R$ 147',
+      color: '#FFC857',
+      capa: '/bonus-covers/protocolo-anti-vicio.png',
+    },
+    {
+      num: '03',
+      dia: 'DIA 14',
+      titulo: 'Código da Disciplina Militar',
+      sub: 'Fundamentos de Execução',
+      desc:
+        'Os princípios que separam quem executa de quem só fala. 12 telas em formato story. Lê em 3 minutos. Carrega para a vida toda.',
+      bullets: [
+        '12 telas em formato story (3 min)',
+        'Princípios extraídos de doutrinas militares',
+        'Pronto para reler em momentos de fraqueza',
+      ],
+      valor: 'R$ 67',
+      color: '#5B8CFF',
+      capa: '/bonus-covers/codigo-disciplina.png',
+    },
+    {
+      num: '04',
+      dia: 'DIA 21',
+      titulo: 'Grupo WhatsApp Exclusivo',
+      sub: 'Comunidade de quem completou',
+      desc:
+        'O grupo só recebe quem fechou 21 dias. Accountability real entre quem provou execução. Não é grupo de "motivação".',
+      bullets: [
+        'Entrada apenas pós-conclusão dos 21 dias',
+        'Cobrança real entre quem provou consistência',
+        'Networking com perfil filtrado',
+      ],
+      valor: 'R$ 197',
+      color: '#00C853',
+      capa: '/bonus-covers/grupo-whatsapp.png',
+    },
+    {
+      num: '05',
+      dia: 'IMEDIATO',
+      titulo: 'FOCO — Biblioteca Completa',
+      sub: 'Vídeos curados + Áudios para concentração',
+      desc:
+        'Mais de 50 vídeos selecionados em 5 categorias estratégicas e biblioteca de áudios para 3 modos de execução. O recurso que você abre antes de agir.',
+      bullets: [
+        '50+ vídeos: Foco e Produtividade, Rotina, Leitura, Dinheiro, Renda Extra',
+        'Áudios para Modo Foco, Modo Reset e Modo Profundo',
+        'Player nativo: continua tocando com a tela bloqueada',
+        'TRAINING: playlist Spotify pra entrar em estado em 1 toque',
+      ],
+      valor: 'R$ 297',
+      color: '#5B8CFF',
+      custom: 'foco',
+    },
+  ];
+
+  const totalBonus = 'R$ 805';
+
+  return (
+    <section style={{ padding: '80px 24px', position: 'relative', overflow: 'hidden' }}>
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%,-50%)',
+          width: '600px',
+          height: '600px',
+          background: 'radial-gradient(circle, rgba(255,200,87,0.04) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div style={{ maxWidth: '1080px', margin: '0 auto', position: 'relative' }}>
+        <Reveal style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <Tag color="yellow">BÔNUS INCLUSOS · NÃO SÃO BRINDES</Tag>
+          <h2
+            className="font-display"
+            style={{
+              fontSize: 'clamp(34px, 6vw, 60px)',
+              letterSpacing: '4px',
+              color: '#F5F5F5',
+              margin: '16px auto 12px',
+              maxWidth: '760px',
+              lineHeight: 1,
+            }}
+          >
+            5 BÔNUS QUE<br />
+            <span style={{ color: '#FFC857' }}>VOCÊ DESBLOQUEIA EXECUTANDO</span>
+          </h2>
+          <p
+            style={{
+              fontFamily: 'Rajdhani, sans-serif',
+              fontSize: '17px',
+              fontWeight: 500,
+              color: '#888',
+              maxWidth: '620px',
+              margin: '0 auto 12px',
+              lineHeight: 1.6,
+            }}
+          >
+            Não vão para o seu e-mail no primeiro dia. Você recebe à medida que prova execução —
+            porque conteúdo dado não vira ação.
+          </p>
+          <div
+            className="font-mono-t"
+            style={{
+              fontSize: '10px',
+              letterSpacing: '3px',
+              color: '#FFC857',
+              textTransform: 'uppercase',
+              marginBottom: '48px',
+            }}
+          >
+            VALOR SE FOSSE VENDIDO SEPARADO · {totalBonus}
+          </div>
+        </Reveal>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          {bonuses.map((b, i) => {
+            const reverso = i % 2 === 1;
+            return (
+              <Reveal key={b.num} delay={i * 0.05}>
+                <div
+                  style={{
+                    padding: '24px',
+                    background: '#0f0f0f',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    flexDirection: reverso ? 'row-reverse' : 'row',
+                    flexWrap: 'wrap',
+                    gap: '32px',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {/* Glow lateral na cor do bônus */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      [reverso ? 'right' : 'left']: '-80px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      width: '220px',
+                      height: '220px',
+                      background: `radial-gradient(circle, ${b.color}18 0%, transparent 70%)`,
+                      pointerEvents: 'none',
+                    }}
+                  />
+
+                  {/* Mockup */}
+                  <div style={{ flexShrink: 0, position: 'relative' }}>
+                    {b.custom === 'foco' ? (
+                      <FocoMockup />
+                    ) : (
+                      <BonusPhoneMockup capa={b.capa} label={b.titulo} color={b.color} />
+                    )}
+                  </div>
+
+                  {/* Conteúdo */}
+                  <div style={{ flex: '1 1 280px', minWidth: '260px', maxWidth: '480px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                      <span
+                        className="font-mono-t"
+                        style={{ fontSize: '9px', letterSpacing: '3px', color: b.color }}
+                      >
+                        BÔNUS {b.num}
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: 'Share Tech Mono, monospace',
+                          fontSize: '8px',
+                          letterSpacing: '2px',
+                          color: '#888',
+                          background: '#1a1a1a',
+                          border: `1px solid ${b.color}40`,
+                          borderRadius: '3px',
+                          padding: '3px 8px',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        LIBERAÇÃO · {b.dia}
+                      </span>
+                    </div>
+
+                    <h3
+                      className="font-display"
+                      style={{
+                        fontSize: 'clamp(24px, 3.4vw, 30px)',
+                        letterSpacing: '2px',
+                        color: '#F5F5F5',
+                        marginBottom: '4px',
+                        lineHeight: 1.05,
+                      }}
+                    >
+                      {b.titulo}
+                    </h3>
+                    <div
+                      className="font-mono-t"
+                      style={{
+                        fontSize: '9px',
+                        letterSpacing: '2px',
+                        color: '#666',
+                        marginBottom: '14px',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {b.sub}
+                    </div>
+
+                    <p
+                      style={{
+                        fontFamily: 'Rajdhani, sans-serif',
+                        fontSize: '15px',
+                        fontWeight: 500,
+                        color: '#aaa',
+                        lineHeight: 1.55,
+                        marginBottom: '14px',
+                      }}
+                    >
+                      {b.desc}
+                    </p>
+
+                    <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 18px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      {b.bullets.map((bullet) => (
+                        <li
+                          key={bullet}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '10px',
+                            fontFamily: 'Rajdhani, sans-serif',
+                            fontSize: '14px',
+                            fontWeight: 600,
+                            color: '#cfcfcf',
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          <span style={{ color: b.color, flexShrink: 0, marginTop: '2px', fontSize: '12px' }}>▸</span>
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'baseline',
+                        gap: '8px',
+                        padding: '8px 14px',
+                        borderRadius: '6px',
+                        background: `${b.color}10`,
+                        border: `1px solid ${b.color}30`,
+                      }}
+                    >
+                      <span
+                        className="font-mono-t"
+                        style={{ fontSize: '8px', letterSpacing: '2px', color: '#777', textTransform: 'uppercase' }}
+                      >
+                        Valor avulso
+                      </span>
+                      <span
+                        className="font-display"
+                        style={{ fontSize: '20px', letterSpacing: '2px', color: b.color }}
+                      >
+                        {b.valor}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
+
+        {/* Stack final de valor */}
+        <Reveal delay={0.1}>
+          <div
+            style={{
+              marginTop: '48px',
+              padding: '28px 24px',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, rgba(255,200,87,0.06), rgba(255,59,59,0.04))',
+              border: '1px solid rgba(255,200,87,0.18)',
+              textAlign: 'center',
+            }}
+          >
+            <div
+              className="font-mono-t"
+              style={{
+                fontSize: '10px',
+                letterSpacing: '3px',
+                color: '#FFC857',
+                textTransform: 'uppercase',
+                marginBottom: '8px',
+              }}
+            >
+              Stack de bônus
+            </div>
+            <div
+              className="font-display"
+              style={{
+                fontSize: 'clamp(26px, 4.2vw, 38px)',
+                letterSpacing: '2px',
+                color: '#F5F5F5',
+                lineHeight: 1.15,
+              }}
+            >
+              Se cada bônus fosse vendido separado:{' '}
+              <span style={{ color: '#FFC857' }}>{totalBonus}</span>
+            </div>
+            <p
+              style={{
+                fontFamily: 'Rajdhani, sans-serif',
+                fontSize: '15px',
+                fontWeight: 500,
+                color: '#888',
+                marginTop: '10px',
+                maxWidth: '560px',
+                margin: '10px auto 0',
+                lineHeight: 1.5,
+              }}
+            >
+              Você não compra os bônus. Você compra a Sala do Tempo. Os bônus vêm porque você
+              precisa deles para sustentar o que conquistou nos 21 dias.
+            </p>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -1446,16 +1919,21 @@ function FinalCTASection({ onCTA }: { onCTA: () => void }) {
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(to right, #FF3B3B, #FFC857)' }} />
 
             <div className="font-mono-t" style={{ fontSize: '9px', letterSpacing: '4px', color: '#555', marginBottom: '8px' }}>SALA DO TEMPO 21</div>
+            {/* Anchor de valor — bônus avulsos somam R$ 805 */}
+            <div className="font-mono-t" style={{ fontSize: '10px', letterSpacing: '3px', color: '#888', marginBottom: '4px' }}>
+              <s style={{ color: '#555' }}>VALOR DOS BÔNUS · R$ 805</s>
+            </div>
             <div className="font-display" style={{ fontSize: '56px', letterSpacing: '4px', color: '#FF3B3B', lineHeight: 1, marginBottom: '4px' }}>R$ 47</div>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '13px', color: '#555', marginBottom: '28px' }}>
-              Acesso vitalício · Sem mensalidade
+              Acesso vitalício · Sem mensalidade · Pagamento único
             </div>
 
             {/* Inclusions */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px', textAlign: 'left' }}>
               {[
                 ['✓', '21 missões completas (Corpo, Mente e Disciplina)', '#00C853'],
-                ['✓', '4 bônus desbloqueados por progressão', '#00C853'],
+                ['✓', '5 bônus desbloqueados por progressão (R$ 805 em valor)', '#00C853'],
+                ['✓', 'FOCO: 50+ vídeos curados + áudios para 3 modos de execução', '#00C853'],
                 ['✓', 'PWA — abre no celular sem instalar', '#00C853'],
                 ['✓', 'Sistema de streak e níveis (Recruta → Elite)', '#00C853'],
                 ['✓', 'Modo Normal e Modo Guerra disponíveis', '#00C853'],
