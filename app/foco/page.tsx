@@ -50,8 +50,8 @@ const CHECKOUT_FOCO_COMPLETO = '';
 
 const VIDEOS: Categoria[] = [
   {
-    id: 'produtividade',
-    label: 'PRODUTIVIDADE',
+    id: 'foco-produtividade',
+    label: 'FOCO E PRODUTIVIDADE',
     uso: 'Vídeo 1 livre · resto após 7 dias da compra',
     cor: '#B452FF',
     daysToUnlockAll: 7,
@@ -119,26 +119,72 @@ const VIDEOS: Categoria[] = [
     ],
   },
   {
-    id: 'foco',
-    label: 'FOCO',
-    uso: 'Para entrar em estado de execução',
-    cor: '#5B8CFF',
-    itens: [
-      { id: 'foco-1', titulo: 'Vídeo 1', duracao: '—', youtubeId: '' },
-      { id: 'foco-2', titulo: 'Vídeo 2', duracao: '—', youtubeId: '' },
-      { id: 'foco-3', titulo: 'Vídeo 3', duracao: '—', youtubeId: '' },
-      { id: 'foco-4', titulo: 'Vídeo 4', duracao: '—', youtubeId: '' },
-    ],
-  },
-  {
     id: 'rotina',
     label: 'ROTINA',
-    uso: 'Estrutura do dia',
+    uso: 'Vídeo 1 livre · resto após 7 dias da compra',
     cor: '#FF8C42',
+    daysToUnlockAll: 7,
     itens: [
-      { id: 'rotina-1', titulo: 'Vídeo 1', duracao: '—', youtubeId: '' },
-      { id: 'rotina-2', titulo: 'Vídeo 2', duracao: '—', youtubeId: '' },
-      { id: 'rotina-3', titulo: 'Vídeo 3', duracao: '—', youtubeId: '' },
+      {
+        id: 'rotina-1',
+        titulo: 'Comece a acordar cedo e veja sua vida mudar',
+        duracao: '—',
+        youtubeId: '0Eg0n5XrdX0',
+      },
+      {
+        id: 'rotina-2',
+        titulo: 'Como fazer o Milagre da Manhã',
+        duracao: '—',
+        youtubeId: 'HDWWFVHd2Ow',
+      },
+      {
+        id: 'rotina-3',
+        titulo: '10 hábitos pequenos que mudam sua vida em silêncio',
+        duracao: '—',
+        youtubeId: '4ZIMZ-a-qAg',
+      },
+      {
+        id: 'rotina-4',
+        titulo: 'Como as primeiras horas do dia definem o seu sucesso',
+        duracao: '—',
+        youtubeId: '1qXbsHk5qb0',
+      },
+      {
+        id: 'rotina-5',
+        titulo: 'Saia do amadorismo: a rotina diária de sucesso',
+        duracao: '—',
+        youtubeId: '429t8Gkzv3U',
+      },
+      {
+        id: 'rotina-6',
+        titulo: 'Sem plano, sem mudança. Simples assim.',
+        duracao: '—',
+        youtubeId: 'bgd1nI7ZRHs',
+      },
+      {
+        id: 'rotina-7',
+        titulo: 'Rotina matinal, organizar a semana e hábitos',
+        duracao: '—',
+        youtubeId: '_DRgg-B6vQs',
+      },
+      {
+        id: 'rotina-8',
+        titulo: 'O que fazer com os imprevistos que afetam a agenda?',
+        duracao: '—',
+        youtubeId: 'y3UurqzGBDM',
+      },
+      {
+        id: 'rotina-9',
+        titulo: '3 dicas para melhorar a organização dos seus estudos',
+        duracao: '—',
+        youtubeId: 'HIYu29USi88',
+      },
+      {
+        id: 'rotina-10',
+        titulo: 'Dica de Bullet Journal: processar semanalmente',
+        duracao: '—',
+        youtubeId: 'ZXFIY8XPk1o',
+      },
     ],
   },
   {
