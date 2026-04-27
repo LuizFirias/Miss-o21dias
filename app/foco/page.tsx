@@ -14,8 +14,10 @@ interface MidiaItem {
   titulo: string;
   /** Duração em formato livre (ex: "3 min", "1h 20"). */
   duracao: string;
-  /** ID do vídeo no YouTube (ex: dQw4w9WgXcQ). Preencher conforme os links chegarem. */
-  youtubeId: string;
+  /** ID do vídeo no YouTube (ex: dQw4w9WgXcQ). Usado pelos vídeos. */
+  youtubeId?: string;
+  /** URL do arquivo de áudio (mp3/m4a/etc). Usado pelos áudios. */
+  audioUrl?: string;
 }
 
 interface Categoria {
@@ -393,25 +395,39 @@ const VIDEOS: Categoria[] = [
 
 const AUDIOS: Categoria[] = [
   {
-    id: 'audio-concentracao',
-    label: 'CONCENTRAÇÃO',
+    id: 'modo-foco',
+    label: 'MODO FOCO',
     uso: 'Durante tarefas',
     cor: '#5B8CFF',
+    daysToUnlockAll: 7,
     itens: [
-      { id: 'aconc-1', titulo: 'Áudio 1', duracao: '—', youtubeId: '' },
-      { id: 'aconc-2', titulo: 'Áudio 2', duracao: '—', youtubeId: '' },
-      { id: 'aconc-3', titulo: 'Áudio 3', duracao: '—', youtubeId: '' },
+      { id: 'mfoco-1', titulo: 'Áudio 1', duracao: '—', audioUrl: '' },
+      { id: 'mfoco-2', titulo: 'Áudio 2', duracao: '—', audioUrl: '' },
+      { id: 'mfoco-3', titulo: 'Áudio 3', duracao: '—', audioUrl: '' },
     ],
   },
   {
-    id: 'audio-leitura',
-    label: 'LEITURA',
-    uso: 'Trilha sonora para leitura',
-    cor: '#FFC857',
+    id: 'modo-reset',
+    label: 'MODO RESET',
+    uso: 'Quando estiver sobrecarregado',
+    cor: '#00C853',
+    daysToUnlockAll: 7,
     itens: [
-      { id: 'aleit-1', titulo: 'Áudio 1', duracao: '—', youtubeId: '' },
-      { id: 'aleit-2', titulo: 'Áudio 2', duracao: '—', youtubeId: '' },
-      { id: 'aleit-3', titulo: 'Áudio 3', duracao: '—', youtubeId: '' },
+      { id: 'mreset-1', titulo: 'Áudio 1', duracao: '—', audioUrl: '' },
+      { id: 'mreset-2', titulo: 'Áudio 2', duracao: '—', audioUrl: '' },
+      { id: 'mreset-3', titulo: 'Áudio 3', duracao: '—', audioUrl: '' },
+    ],
+  },
+  {
+    id: 'modo-profundo',
+    label: 'MODO PROFUNDO',
+    uso: 'Sessão de trabalho longa',
+    cor: '#B452FF',
+    daysToUnlockAll: 7,
+    itens: [
+      { id: 'mprof-1', titulo: 'Áudio 1', duracao: '—', audioUrl: '' },
+      { id: 'mprof-2', titulo: 'Áudio 2', duracao: '—', audioUrl: '' },
+      { id: 'mprof-3', titulo: 'Áudio 3', duracao: '—', audioUrl: '' },
     ],
   },
 ];
@@ -424,7 +440,8 @@ export default function FocoPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [tab, setTab] = useState<TabKey>('videos');
-  const [playing, setPlaying] = useState<MidiaItem | null>(null);
+  const [playingVideo, setPlayingVideo] = useState<MidiaItem | null>(null);
+  const [playingAudio, setPlayingAudio] = useState<MidiaItem | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -448,11 +465,13 @@ export default function FocoPage() {
   };
 
   const handlePlay = (item: MidiaItem) => {
-    if (!item.youtubeId) {
-      // sem link ainda — não abrir player vazio
-      return;
+    if (tab === 'videos') {
+      if (!item.youtubeId) return;
+      setPlayingVideo(item);
+    } else {
+      if (!item.audioUrl) return;
+      setPlayingAudio(item);
     }
-    setPlaying(item);
   };
 
   return (
@@ -539,11 +558,11 @@ export default function FocoPage() {
         </AnimatePresence>
       </div>
 
-      {/* Player YouTube */}
-      <YouTubePlayerModal
-        item={playing}
-        onClose={() => setPlaying(null)}
-      />
+      {/* Player YouTube — para a aba VÍDEOS */}
+      <YouTubePlayerModal item={playingVideo} onClose={() => setPlayingVideo(null)} />
+
+      {/* Player Áudio — para a aba ÁUDIOS (HTML5 audio + Media Session) */}
+      <AudioPlayerModal item={playingAudio} onClose={() => setPlayingAudio(null)} />
     </Layout>
   );
 }
@@ -831,7 +850,7 @@ function ItemCard({
   onPlay: () => void;
 }) {
   if (liberado) {
-    const sem_link = !item.youtubeId;
+    const sem_link = !item.youtubeId && !item.audioUrl;
     return (
       <button
         type="button"
@@ -894,6 +913,225 @@ function PlayIcon({ size = 16 }: { size?: number }) {
     <svg width={size} height={size} viewBox="0 0 24 24" fill="#0D0D0D" aria-hidden>
       <path d="M8 5v14l11-7z" />
     </svg>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   AUDIO PLAYER (HTML5 audio + Media Session)
+
+   Player simples com tag <audio> nativa, que continua tocando
+   quando a tela é bloqueada / o app sai de foco. Usa Media Session
+   API para registrar metadata e atalhos no painel de mídia do SO.
+───────────────────────────────────────────── */
+
+function AudioPlayerModal({
+  item,
+  onClose,
+}: {
+  item: MidiaItem | null;
+  onClose: () => void;
+}) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  // ESC fecha o modal
+  useEffect(() => {
+    if (!item) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [item, onClose]);
+
+  // Trava scroll do body enquanto aberto
+  useEffect(() => {
+    if (!item) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [item]);
+
+  // Media Session — controles no lock screen / notificação
+  useEffect(() => {
+    if (!item) return;
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: item.titulo,
+      artist: 'Sala do Tempo · FOCO',
+      album: 'Biblioteca de áudio',
+      artwork: [
+        { src: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+        { src: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+      ],
+    });
+
+    const audio = audioRef.current;
+    const safe = (fn: () => void) => () => {
+      try {
+        fn();
+      } catch {
+        // ignore
+      }
+    };
+
+    navigator.mediaSession.setActionHandler('play', safe(() => audio?.play()));
+    navigator.mediaSession.setActionHandler('pause', safe(() => audio?.pause()));
+    navigator.mediaSession.setActionHandler(
+      'seekbackward',
+      safe(() => {
+        if (audio) audio.currentTime = Math.max(0, audio.currentTime - 10);
+      }),
+    );
+    navigator.mediaSession.setActionHandler(
+      'seekforward',
+      safe(() => {
+        if (audio) audio.currentTime = audio.currentTime + 10;
+      }),
+    );
+
+    return () => {
+      try {
+        navigator.mediaSession.setActionHandler('play', null);
+        navigator.mediaSession.setActionHandler('pause', null);
+        navigator.mediaSession.setActionHandler('seekbackward', null);
+        navigator.mediaSession.setActionHandler('seekforward', null);
+      } catch {
+        // ignore
+      }
+    };
+  }, [item]);
+
+  return (
+    <AnimatePresence>
+      {item && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-preto/90 backdrop-blur-sm p-4"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ y: 24, scale: 0.96 }}
+            animate={{ y: 0, scale: 1 }}
+            exit={{ y: 24, scale: 0.96 }}
+            transition={{ duration: 0.2 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-md"
+            style={{
+              border: '1px solid rgba(91,140,255,0.45)',
+              borderRadius: '16px',
+              boxShadow:
+                '0 0 14px rgba(91,140,255,0.25), 0 0 38px rgba(91,140,255,0.15), inset 0 0 0 1px rgba(91,140,255,0.06)',
+              background: '#0D0D0D',
+            }}
+          >
+            {/* Top bar */}
+            <div className="flex items-center justify-between p-3 border-b border-azul-mente/20">
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Voltar"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-azul-mente/10 transition-colors"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-branco"
+                  aria-hidden
+                >
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+                <span className="font-mono text-[10px] tracking-[2px] text-branco-dim uppercase">
+                  Voltar
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Sair"
+                className="p-2 rounded-md hover:bg-azul-mente/10 transition-colors"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-branco"
+                  aria-hidden
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Capa decorativa + título */}
+            <div className="px-6 pt-8 pb-4 flex flex-col items-center text-center">
+              <div
+                className="w-32 h-32 rounded-full flex items-center justify-center mb-5"
+                style={{
+                  background:
+                    'radial-gradient(circle, rgba(91,140,255,0.25) 0%, rgba(91,140,255,0.04) 70%)',
+                  border: '1px solid rgba(91,140,255,0.25)',
+                  boxShadow: '0 0 24px rgba(91,140,255,0.25)',
+                }}
+              >
+                <span className="text-5xl">🎧</span>
+              </div>
+              <div className="font-mono text-[9px] tracking-[3px] text-azul-mente uppercase mb-1">
+                Tocando agora
+              </div>
+              <div className="font-display text-xl tracking-[2px] text-branco leading-tight">
+                {item.titulo}
+              </div>
+              {item.duracao && item.duracao !== '—' && (
+                <div className="font-mono text-[10px] tracking-[2px] text-branco-dim/50 uppercase mt-1">
+                  {item.duracao}
+                </div>
+              )}
+            </div>
+
+            {/* HTML5 audio nativo — controles e seek pelo browser.
+                Continua tocando com tela bloqueada, integrado ao
+                Media Session API acima. */}
+            <div className="px-6 pb-6">
+              <audio
+                key={item.id}
+                ref={audioRef}
+                src={item.audioUrl}
+                controls
+                autoPlay
+                preload="auto"
+                className="w-full"
+                style={{ outline: 'none' }}
+              >
+                Seu navegador não suporta áudio HTML5.
+              </audio>
+
+              <p className="font-mono text-[8px] tracking-[2px] text-branco-dim/40 uppercase text-center mt-3">
+                ▸ Continua tocando com a tela bloqueada
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
