@@ -14,6 +14,7 @@ export interface User {
   nivel_progressao: number;
   limitacao: Limitacao;
   onboarding_completo?: boolean;
+  senha_alterada?: boolean;
   ultimo_acesso_dia?: string;
   pode_avancar_dia?: boolean;
   // Order bumps (produtos premium)
@@ -55,7 +56,7 @@ export const NIVEIS_PROGRESSAO: NivelProgresso[] = [
   { nivel: 'Recruta', min: 0, max: 3 },
   { nivel: 'Soldado', min: 4, max: 7 },
   { nivel: 'Cabo', min: 8, max: 14 },
-  { nivel: 'Elite', min: 15, max: 21 },
+  { nivel: 'Sargento', min: 15, max: 21 },
 ];
 
 export const MULTIPLICADORES: Record<Nivel, number> = {

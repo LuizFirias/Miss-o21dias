@@ -307,6 +307,10 @@ function StickyHeader({ onCTA }: { onCTA: () => void }) {
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
+  const goToLogin = () => {
+    if (typeof window !== 'undefined') window.location.href = '/login';
+  };
+
   return (
     <motion.header
       animate={{ background: scrolled ? 'rgba(13,13,13,0.95)' : 'transparent' }}
@@ -330,25 +334,48 @@ function StickyHeader({ onCTA }: { onCTA: () => void }) {
           SALA DO <span style={{ color: '#FF3B3B' }}>TEMPO</span>
         </span>
       </div>
-      {scrolled && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          onClick={onCTA}
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <button
+          onClick={goToLogin}
+          aria-label="Já tenho conta"
           style={{
-            background: '#FF3B3B',
-            border: 'none',
+            background: 'transparent',
+            border: '1px solid rgba(255,255,255,0.18)',
             borderRadius: '4px',
-            padding: '8px 20px',
-            color: '#fff',
-            fontFamily: "'Bebas Neue', cursive",
-            fontSize: '14px',
-            letterSpacing: '3px',
+            padding: '7px 14px',
+            color: '#F5F5F5',
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: '10px',
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
           }}
         >
-          GARANTIR ACESSO
-        </motion.button>
-      )}
+          Já tenho conta
+        </button>
+
+        {scrolled && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onClick={onCTA}
+            style={{
+              background: '#FF3B3B',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '8px 20px',
+              color: '#fff',
+              fontFamily: "'Bebas Neue', cursive",
+              fontSize: '14px',
+              letterSpacing: '3px',
+            }}
+          >
+            GARANTIR ACESSO
+          </motion.button>
+        )}
+      </div>
     </motion.header>
   );
 }
@@ -512,7 +539,7 @@ function TickerBar() {
     'CHECKPOINT DIA 7',
     'CHECKPOINT DIA 14',
     'STREAK SEM FALHA',
-    'ELITE NO DIA 21',
+    'SARGENTO NO DIA 21',
   ];
 
   return (
@@ -722,7 +749,7 @@ function HowItWorksSection() {
     {
       num: '03',
       title: 'ACUMULA O STREAK',
-      desc: 'Cada dia executado aumenta seu streak e sua progressão de nível. Recruta → Soldado → Cabo → Elite. Falhar reseta. A consequência é real.',
+      desc: 'Cada dia executado aumenta seu streak e sua progressão de nível. Recruta → Soldado → Cabo → Sargento. Falhar reseta. A consequência é real.',
       screen: <CheckpointScreen />,
     },
   ];
@@ -799,7 +826,7 @@ function MissionsSection() {
     { dia: 1, nome: 'FORÇA DO GOKU', exercicios: 'Flexões 20 · Agachamentos 30 · Prancha 30s' },
     { dia: 7, nome: 'CHECKPOINT — SOBREVIVENTE', exercicios: 'Flexões 45 · Agachamentos 55 · Burpees 20' },
     { dia: 14, nome: 'CHECKPOINT — GUERREIRO', exercicios: 'Flexões 70 · Agachamentos 90 · Mountain Climbers 50' },
-    { dia: 21, nome: 'ELITE — MISSÃO FINAL', exercicios: 'Flexões 105 · Agachamentos 125 · Prancha 120s' },
+    { dia: 21, nome: 'SARGENTO — MISSÃO FINAL', exercicios: 'Flexões 105 · Agachamentos 125 · Prancha 120s' },
   ];
 
   return (
@@ -1490,150 +1517,6 @@ function BonusSection() {
 }
 
 /* ══════════════════════════════════════════════════
-   SECTION: ORDER BUMPS (Premium Upgrades)
-══════════════════════════════════════════════════ */
-function OrderBumpsSection() {
-  const bumps = [
-    {
-      icon: '⚔',
-      titulo: 'MODO GUERRA',
-      sub: 'Protocolo de Execução Sem Falha',
-      preco: 'R$ 27',
-      color: '#FF3B3B',
-      features: [
-        'Missões não podem ser puladas',
-        'Falha = reset para o dia 1',
-        'Sem negociação. Sem adaptação',
-        'Mapa de 21 dias com rastreamento',
-        'Para quem quer resultado real',
-      ],
-      badge: 'MAIS POPULAR',
-    },
-    {
-      icon: '📅',
-      titulo: 'CONTINUIDADE 30 DIAS',
-      sub: '30 Dias Extras Após o Desafio',
-      preco: 'R$ 37',
-      color: '#FFC857',
-      features: [
-        'Missões extras após o dia 21',
-        'Manutenção do streak conquistado',
-        'Novas frases e desafios',
-        'Sem interrupção do ritmo',
-        'Para quem não quer parar',
-      ],
-      badge: null,
-    },
-    {
-      icon: '⚡',
-      titulo: 'DISPARO RÁPIDO',
-      sub: 'Ferramenta Anti-Procrastinação',
-      preco: 'R$ 17',
-      color: '#00C853',
-      features: [
-        'Botão de ação: travou? Desbloqueie em 60s',
-        'Contagem regressiva anti-paralisia',
-        'Força ação física imediata',
-        'Foco em 1 tarefa só',
-        'Para momentos críticos de inércia',
-      ],
-      badge: null,
-    },
-  ];
-
-  return (
-    <section style={{ padding: '80px 24px', background: '#080808' }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <Reveal>
-          <Tag color="dim">ARSENAL AVANÇADO</Tag>
-          <h2
-            className="font-display"
-            style={{ fontSize: 'clamp(32px, 5vw, 56px)', letterSpacing: '4px', color: '#F5F5F5', margin: '16px 0 12px' }}
-          >
-            POTENCIALIZE<br />
-            <span style={{ color: '#888' }}>A SUA JORNADA</span>
-          </h2>
-          <p style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '16px', fontWeight: 500, color: '#666', marginBottom: '48px', maxWidth: '500px', lineHeight: 1.6 }}>
-            Recursos premium desbloqueados individualmente. Adicione ao seu pedido com um clique.
-          </p>
-        </Reveal>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
-          {bumps.map((b, i) => (
-            <Reveal key={b.titulo} delay={i * 0.1}>
-              <div
-                style={{
-                  padding: '28px',
-                  background: '#0f0f0f',
-                  border: `1px solid ${b.color}25`,
-                  borderTop: `3px solid ${b.color}`,
-                  borderRadius: '8px',
-                  position: 'relative',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                {b.badge && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '-1px',
-                      right: '20px',
-                      background: b.color,
-                      color: '#000',
-                      fontFamily: 'Bebas Neue, cursive',
-                      fontSize: '9px',
-                      letterSpacing: '2px',
-                      padding: '3px 10px',
-                      borderRadius: '0 0 4px 4px',
-                    }}
-                  >
-                    {b.badge}
-                  </div>
-                )}
-
-                <div style={{ fontSize: '28px', marginBottom: '14px' }}>{b.icon}</div>
-                <div className="font-display" style={{ fontSize: '22px', letterSpacing: '2px', color: '#F5F5F5', marginBottom: '4px' }}>{b.titulo}</div>
-                <div className="font-mono-t" style={{ fontSize: '8px', letterSpacing: '2px', color: '#555', marginBottom: '20px', textTransform: 'uppercase' }}>{b.sub}</div>
-
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
-                  {b.features.map((f) => (
-                    <div key={f} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                      <span style={{ color: b.color, fontSize: '12px', flexShrink: 0, marginTop: '2px' }}>→</span>
-                      <span style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '13px', fontWeight: 600, color: '#888', lineHeight: 1.4 }}>{f}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span className="font-display" style={{ fontSize: '28px', letterSpacing: '2px', color: b.color }}>{b.preco}</span>
-                  <button
-                    style={{
-                      background: `${b.color}15`,
-                      border: `1px solid ${b.color}40`,
-                      borderRadius: '4px',
-                      padding: '8px 16px',
-                      cursor: 'pointer',
-                      color: b.color,
-                      fontFamily: 'Bebas Neue, cursive',
-                      fontSize: '13px',
-                      letterSpacing: '3px',
-                    }}
-                  >
-                    ADICIONAR
-                  </button>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ══════════════════════════════════════════════════
    SECTION: TESTIMONIALS
 ══════════════════════════════════════════════════ */
 function TestimonialsSection() {
@@ -1643,7 +1526,7 @@ function TestimonialsSection() {
       cargo: 'Dia 21 concluído',
       texto: 'Não tem papo de motivação aqui. É missão, é streak, é consequência. Finalizei os 21 dias e minha rotina mudou de verdade.',
       stars: 5,
-      nivel: 'ELITE',
+      nivel: 'SARGENTO',
     },
     {
       nome: 'Rafael S.',
@@ -1664,7 +1547,7 @@ function TestimonialsSection() {
       cargo: 'Completou 2x',
       texto: 'Fiz o desafio duas vezes. A segunda com Modo Guerra. Diferente de tudo que já tentei. O app não te deixa fugir.',
       stars: 5,
-      nivel: 'ELITE',
+      nivel: 'SARGENTO',
     },
     {
       nome: 'Bruno R.',
@@ -1678,7 +1561,7 @@ function TestimonialsSection() {
       cargo: 'Dia 21 concluído',
       texto: 'O que diferencia é a consequência real. Outros apps você ignora. Aqui você sente o peso de zerar o streak. Isso funciona.',
       stars: 5,
-      nivel: 'ELITE',
+      nivel: 'SARGENTO',
     },
   ];
 
@@ -1687,7 +1570,7 @@ function TestimonialsSection() {
     'SOLDADO': '#5B8CFF',
     'CABO': '#FFC857',
     'GUERREIRO': '#FF3B3B',
-    'ELITE': '#00C853',
+    'SARGENTO': '#00C853',
   };
 
   return (
@@ -1772,7 +1655,7 @@ function ProgressionSection() {
     { nivel: 'RECRUTA', range: 'Dias 0–3', color: '#888', desc: 'Você está começando. O sistema te coloca nos trilhos.' },
     { nivel: 'SOLDADO', range: 'Dias 4–7', color: '#5B8CFF', desc: 'Primeiro checkpoint. A maioria já desistiu aqui.' },
     { nivel: 'CABO', range: 'Dias 8–14', color: '#FFC857', desc: 'Segundo checkpoint. Você virou rotina.' },
-    { nivel: 'ELITE', range: 'Dias 15–21', color: '#FF3B3B', desc: 'Missão final. Apenas quem não desistiu chega aqui.' },
+    { nivel: 'SARGENTO', range: 'Dias 15–21', color: '#FF3B3B', desc: 'Missão final. Apenas quem não desistiu chega aqui.' },
   ];
 
   return (
@@ -1782,7 +1665,7 @@ function ProgressionSection() {
           <Tag color="red">PROGRESSÃO</Tag>
           <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 54px)', letterSpacing: '4px', color: '#F5F5F5', margin: '16px 0 40px' }}>
             DA RECRUTA<br />
-            <span style={{ color: '#FF3B3B' }}>AO ELITE</span>
+            <span style={{ color: '#FF3B3B' }}>AO SARGENTO</span>
           </h2>
         </Reveal>
 
@@ -1935,7 +1818,7 @@ function FinalCTASection({ onCTA }: { onCTA: () => void }) {
                 ['✓', '5 bônus desbloqueados por progressão (R$ 805 em valor)', '#00C853'],
                 ['✓', 'FOCO: 50+ vídeos curados + áudios para 3 modos de execução', '#00C853'],
                 ['✓', 'PWA — abre no celular sem instalar', '#00C853'],
-                ['✓', 'Sistema de streak e níveis (Recruta → Elite)', '#00C853'],
+                ['✓', 'Sistema de streak e níveis (Recruta → Sargento)', '#00C853'],
                 ['✓', 'Modo Normal e Modo Guerra disponíveis', '#00C853'],
                 ['✓', '7 dias de garantia total', '#00C853'],
               ].map(([check, text, color]) => (
@@ -2110,7 +1993,6 @@ export default function VendasPage() {
         <HowItWorksSection />
         <MissionsSection />
         <BonusSection />
-        <OrderBumpsSection />
         <TestimonialsSection />
         <ProgressionSection />
         <GuaranteeSection />

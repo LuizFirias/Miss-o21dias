@@ -71,6 +71,7 @@ export default function CadastroPage() {
                 modo: 'normal', // Será atualizado no onboarding
                 dia_atual: 1,
                 onboarding_completo: false, // Forçar onboarding
+                senha_alterada: true, // user definiu a própria senha no cadastro
               },
             ]);
 

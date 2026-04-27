@@ -30,12 +30,12 @@ interface CaktoWebhookPayload {
 /* ══════════════════════════════════════════════════
    CONFIG
 ══════════════════════════════════════════════════ */
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const webhookSecret = process.env.CAKTO_WEBHOOK_SECRET!;
-const resendApiKey = process.env.RESEND_API_KEY!;
-const fromEmail = process.env.RESEND_FROM_EMAIL!;
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://saladotempo.site';
+const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim().replace(/\/+$/, '');
+const supabaseServiceKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
+const webhookSecret = (process.env.CAKTO_WEBHOOK_SECRET || '').trim();
+const resendApiKey = (process.env.RESEND_API_KEY || '').trim();
+const fromEmail = (process.env.RESEND_FROM_EMAIL || '').trim();
+const appUrl = ((process.env.NEXT_PUBLIC_APP_URL || 'https://saladotempo.site').trim()).replace(/\/+$/, '');
 
 // Supabase Admin (Service Role)
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
@@ -77,19 +77,23 @@ function detectOrderBumps(orderBumps: Array<{ name: string }> = []) {
     modo_guerra_acesso: false,
     continuidade_30dias: false,
     disparo_rapido_acesso: false,
+    foco_acesso: false,
   };
 
   orderBumps.forEach((bump) => {
-    const name = bump.name.toLowerCase();
-    
+    const name = (bump.name || '').toLowerCase();
+
     if (name.includes('modo guerra') || name.includes('acesso oculto')) {
       bumps.modo_guerra_acesso = true;
     }
     if (name.includes('continuidade') || name.includes('30 dias')) {
       bumps.continuidade_30dias = true;
     }
-    if (name.includes('disparo rápido') || name.includes('execução imediata')) {
+    if (name.includes('disparo rápido') || name.includes('disparo rapido') || name.includes('execução imediata') || name.includes('execucao imediata')) {
       bumps.disparo_rapido_acesso = true;
+    }
+    if (name.includes('foco') || name.includes('biblioteca foco') || name.includes('arsenal foco')) {
+      bumps.foco_acesso = true;
     }
   });
 
@@ -100,12 +104,13 @@ async function sendWelcomeEmail(
   email: string,
   name: string,
   password: string,
-  orderBumps: { modo_guerra_acesso: boolean; continuidade_30dias: boolean; disparo_rapido_acesso: boolean }
+  orderBumps: { modo_guerra_acesso: boolean; continuidade_30dias: boolean; disparo_rapido_acesso: boolean; foco_acesso: boolean }
 ) {
   const premiumFeatures = [];
   if (orderBumps.modo_guerra_acesso) premiumFeatures.push('✓ Modo Guerra (Acesso Oculto)');
   if (orderBumps.continuidade_30dias) premiumFeatures.push('✓ Continuidade (30 dias extras)');
   if (orderBumps.disparo_rapido_acesso) premiumFeatures.push('✓ Disparo Rápido');
+  if (orderBumps.foco_acesso) premiumFeatures.push('✓ Biblioteca FOCO completa');
 
   const premiumSection = premiumFeatures.length > 0
     ? `
@@ -276,14 +281,26 @@ export async function POST(request: NextRequest) {
 
     if (existingUser) {
       console.log('⚠️ Usuário já existe:', email);
-      
+
       // Atualizar campos de acesso se comprou order bumps
-      if (bumps.modo_guerra_acesso || bumps.continuidade_30dias || bumps.disparo_rapido_acesso) {
+      if (
+        bumps.modo_guerra_acesso ||
+        bumps.continuidade_30dias ||
+        bumps.disparo_rapido_acesso ||
+        bumps.foco_acesso
+      ) {
+        // Faz OR com o estado atual para nunca remover acessos já liberados
+        const updates: Record<string, boolean> = {};
+        if (bumps.modo_guerra_acesso) updates.modo_guerra_acesso = true;
+        if (bumps.continuidade_30dias) updates.continuidade_30dias = true;
+        if (bumps.disparo_rapido_acesso) updates.disparo_rapido_acesso = true;
+        if (bumps.foco_acesso) updates.foco_acesso = true;
+
         await supabaseAdmin
           .from('usuarios')
-          .update(bumps)
+          .update(updates)
           .eq('id', existingUser.id);
-        
+
         console.log('✅ Campos de acesso atualizados');
       }
 
@@ -329,7 +346,8 @@ export async function POST(request: NextRequest) {
         dia_atual: 1,
         streak: 0,
         onboarding_completo: false,
-        ...bumps, // Adiciona campos de order bumps
+        senha_alterada: false, // força tela de troca de senha no 1º login
+        ...bumps, // campos de order bumps (incl. foco_acesso)
       },
     ]);
 

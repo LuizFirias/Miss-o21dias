@@ -1,15 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+// Sanitiza variáveis: trim de espaços/quebras e remove trailing slash da URL.
+// Trailing slash ou whitespace na env (comum no Vercel) gera o erro
+// "Invalid path specified in request URL" nas chamadas ao Supabase.
+const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim().replace(/\/+$/, '');
+const supabaseAnonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').trim();
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY são obrigatórios');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    // Persistir sessão no localStorage para login persistente
     persistSession: true,
-    // Detectar mudanças de sessão automaticamente
     autoRefreshToken: true,
-    // Storage onde a sessão será salva (localStorage por padrão)
+    detectSessionInUrl: true,
+    flowType: 'pkce',
     storage: typeof window !== 'undefined' ? window.localStorage : undefined,
   },
 });

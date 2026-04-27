@@ -70,16 +70,26 @@ export default function LoginPage() {
                 dia_atual: 1,
                 streak: 0,
                 onboarding_completo: false,
+                senha_alterada: true, // cadastro manual já usa senha do próprio user
               },
             ]);
 
           if (insertError) {
             console.error('Erro ao criar perfil:', insertError);
           }
-          
+
           setMessage('Login realizado! Redirecionando...');
           await new Promise(resolve => setTimeout(resolve, 500));
           router.push('/onboarding');
+          return;
+        }
+
+        // Primeiro login com senha temporária (vinda do webhook Cakto)
+        // → força a tela de troca de senha antes de qualquer outra coisa
+        if (perfil.senha_alterada === false) {
+          setMessage('Defina sua senha pessoal...');
+          await new Promise(resolve => setTimeout(resolve, 400));
+          router.push('/trocar-senha');
           return;
         }
 
@@ -92,11 +102,7 @@ export default function LoginPage() {
         }
 
         setMessage('Login realizado! Redirecionando...');
-        
-        // Aguardar sessão ser salva no localStorage antes de redirecionar
         await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Usar router.push para navegação SPA (sem reload completo)
         router.push('/home');
       }
     } catch (error: any) {
