@@ -143,7 +143,7 @@ export const MISSOES: Missao[] = [
   },
   {
     dia: 21,
-    nome: 'ELITE - MISSÃO FINAL',
+    nome: 'SARGENTO - MISSÃO FINAL',
     corpo: { flexoes: 105, agachamentos: 125, prancha: 120 },
     mente: 'Definir próxima meta de 21 dias',
     disciplina: 'Completar tudo. Sem exceção.',

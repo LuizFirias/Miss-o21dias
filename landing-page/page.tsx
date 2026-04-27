@@ -469,6 +469,27 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
                   <span key={t} className="font-mono-t" style={{ fontSize: '8px', letterSpacing: '1px', color: '#888' }}>{t}</span>
                 ))}
               </div>
+
+              {/* Urgency strip */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '14px' }}
+              >
+                <span
+                  className="flicker"
+                  style={{
+                    width: '7px', height: '7px', borderRadius: '50%',
+                    background: '#FF3B3B', display: 'inline-block', flexShrink: 0,
+                  }}
+                />
+                <span className="font-mono-t" style={{ fontSize: '9px', letterSpacing: '2px', color: '#777' }}>
+                  GRUPO DO DIA 21 —{' '}
+                  <span style={{ color: '#FF3B3B', fontWeight: 700 }}>23 VAGAS</span>{' '}
+                  RESTANTES NESTA RODADA
+                </span>
+              </motion.div>
             </motion.div>
           </div>
 
@@ -511,7 +532,7 @@ function TickerBar() {
     'CHECKPOINT DIA 7',
     'CHECKPOINT DIA 14',
     'STREAK SEM FALHA',
-    'ELITE NO DIA 21',
+    'SARGENTO NO DIA 21',
   ];
 
   return (
@@ -597,6 +618,29 @@ function ProblemSection() {
             É ausência de <span style={{ color: '#F5F5F5', fontWeight: 700 }}>estrutura e consequência real</span>.
             Sem isso, você fica no mesmo ciclo para sempre.
           </p>
+        </Reveal>
+
+        {/* Micro-storytelling */}
+        <Reveal delay={0.05}>
+          <div
+            style={{
+              marginBottom: '36px',
+              padding: '20px 24px',
+              background: '#0c0c0c',
+              border: '1px solid rgba(255,255,255,0.06)',
+              borderLeft: '3px solid rgba(255,200,87,0.45)',
+              borderRadius: '6px',
+            }}
+          >
+            <div className="font-mono-t" style={{ fontSize: '8px', letterSpacing: '3px', color: '#555', marginBottom: '12px' }}>HISTÓRIA REAL</div>
+            <p style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '16px', fontWeight: 500, color: '#999', lineHeight: 1.75 }}>
+              Era segunda, 23h. <span style={{ color: '#F0F0F0', fontWeight: 700 }}>João, 26 anos, Goiânia.</span>{' '}
+              Estava deitado com o celular na mão, scrollando sem parar, sabendo exatamente o que deveria ter feito durante o dia.
+              Academia adiada. Projeto parado. A mesma promessa de "amanhã eu começo".{' '}
+              <span style={{ color: '#FFC857' }}>Não era preguiça — era ausência de sistema.</span>{' '}
+              Hoje ele está no dia 17.
+            </p>
+          </div>
         </Reveal>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -721,7 +765,7 @@ function HowItWorksSection() {
     {
       num: '03',
       title: 'ACUMULA O STREAK',
-      desc: 'Cada dia executado aumenta seu streak e sua progressão de nível. Recruta → Soldado → Cabo → Elite. Falhar reseta. A consequência é real.',
+      desc: 'Cada dia executado aumenta seu streak e sua progressão de nível. Recruta → Soldado → Cabo → Sargento. Falhar reseta. A consequência é real.',
       screen: <CheckpointScreen />,
     },
   ];
@@ -798,7 +842,7 @@ function MissionsSection() {
     { dia: 1, nome: 'FORÇA DO GOKU', exercicios: 'Flexões 20 · Agachamentos 30 · Prancha 30s' },
     { dia: 7, nome: 'CHECKPOINT — SOBREVIVENTE', exercicios: 'Flexões 45 · Agachamentos 55 · Burpees 20' },
     { dia: 14, nome: 'CHECKPOINT — GUERREIRO', exercicios: 'Flexões 70 · Agachamentos 90 · Mountain Climbers 50' },
-    { dia: 21, nome: 'ELITE — MISSÃO FINAL', exercicios: 'Flexões 105 · Agachamentos 125 · Prancha 120s' },
+    { dia: 21, nome: 'SARGENTO — MISSÃO FINAL', exercicios: 'Flexões 105 · Agachamentos 125 · Prancha 120s' },
   ];
 
   return (
@@ -1017,150 +1061,6 @@ function BonusSection() {
 }
 
 /* ══════════════════════════════════════════════════
-   SECTION: ORDER BUMPS (Premium Upgrades)
-══════════════════════════════════════════════════ */
-function OrderBumpsSection() {
-  const bumps = [
-    {
-      icon: '⚔',
-      titulo: 'MODO GUERRA',
-      sub: 'Protocolo de Execução Sem Falha',
-      preco: 'R$ 27',
-      color: '#FF3B3B',
-      features: [
-        'Missões não podem ser puladas',
-        'Falha = reset para o dia 1',
-        'Sem negociação. Sem adaptação',
-        'Mapa de 21 dias com rastreamento',
-        'Para quem quer resultado real',
-      ],
-      badge: 'MAIS POPULAR',
-    },
-    {
-      icon: '📅',
-      titulo: 'CONTINUIDADE 30 DIAS',
-      sub: '30 Dias Extras Após o Desafio',
-      preco: 'R$ 37',
-      color: '#FFC857',
-      features: [
-        'Missões extras após o dia 21',
-        'Manutenção do streak conquistado',
-        'Novas frases e desafios',
-        'Sem interrupção do ritmo',
-        'Para quem não quer parar',
-      ],
-      badge: null,
-    },
-    {
-      icon: '⚡',
-      titulo: 'DISPARO RÁPIDO',
-      sub: 'Ferramenta Anti-Procrastinação',
-      preco: 'R$ 17',
-      color: '#00C853',
-      features: [
-        'Botão de ação: travou? Desbloqueie em 60s',
-        'Contagem regressiva anti-paralisia',
-        'Força ação física imediata',
-        'Foco em 1 tarefa só',
-        'Para momentos críticos de inércia',
-      ],
-      badge: null,
-    },
-  ];
-
-  return (
-    <section style={{ padding: '80px 24px', background: '#080808' }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        <Reveal>
-          <Tag color="dim">ARSENAL AVANÇADO</Tag>
-          <h2
-            className="font-display"
-            style={{ fontSize: 'clamp(32px, 5vw, 56px)', letterSpacing: '4px', color: '#F5F5F5', margin: '16px 0 12px' }}
-          >
-            POTENCIALIZE<br />
-            <span style={{ color: '#888' }}>A SUA JORNADA</span>
-          </h2>
-          <p style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '16px', fontWeight: 500, color: '#666', marginBottom: '48px', maxWidth: '500px', lineHeight: 1.6 }}>
-            Recursos premium desbloqueados individualmente. Adicione ao seu pedido com um clique.
-          </p>
-        </Reveal>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
-          {bumps.map((b, i) => (
-            <Reveal key={b.titulo} delay={i * 0.1}>
-              <div
-                style={{
-                  padding: '28px',
-                  background: '#0f0f0f',
-                  border: `1px solid ${b.color}25`,
-                  borderTop: `3px solid ${b.color}`,
-                  borderRadius: '8px',
-                  position: 'relative',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                {b.badge && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '-1px',
-                      right: '20px',
-                      background: b.color,
-                      color: '#000',
-                      fontFamily: 'Bebas Neue, cursive',
-                      fontSize: '9px',
-                      letterSpacing: '2px',
-                      padding: '3px 10px',
-                      borderRadius: '0 0 4px 4px',
-                    }}
-                  >
-                    {b.badge}
-                  </div>
-                )}
-
-                <div style={{ fontSize: '28px', marginBottom: '14px' }}>{b.icon}</div>
-                <div className="font-display" style={{ fontSize: '22px', letterSpacing: '2px', color: '#F5F5F5', marginBottom: '4px' }}>{b.titulo}</div>
-                <div className="font-mono-t" style={{ fontSize: '8px', letterSpacing: '2px', color: '#555', marginBottom: '20px', textTransform: 'uppercase' }}>{b.sub}</div>
-
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
-                  {b.features.map((f) => (
-                    <div key={f} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                      <span style={{ color: b.color, fontSize: '12px', flexShrink: 0, marginTop: '2px' }}>→</span>
-                      <span style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '13px', fontWeight: 600, color: '#888', lineHeight: 1.4 }}>{f}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span className="font-display" style={{ fontSize: '28px', letterSpacing: '2px', color: b.color }}>{b.preco}</span>
-                  <button
-                    style={{
-                      background: `${b.color}15`,
-                      border: `1px solid ${b.color}40`,
-                      borderRadius: '4px',
-                      padding: '8px 16px',
-                      cursor: 'pointer',
-                      color: b.color,
-                      fontFamily: 'Bebas Neue, cursive',
-                      fontSize: '13px',
-                      letterSpacing: '3px',
-                    }}
-                  >
-                    ADICIONAR
-                  </button>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ══════════════════════════════════════════════════
    SECTION: TESTIMONIALS
 ══════════════════════════════════════════════════ */
 function TestimonialsSection() {
@@ -1170,7 +1070,7 @@ function TestimonialsSection() {
       cargo: 'Dia 21 concluído',
       texto: 'Não tem papo de motivação aqui. É missão, é streak, é consequência. Finalizei os 21 dias e minha rotina mudou de verdade.',
       stars: 5,
-      nivel: 'ELITE',
+      nivel: 'SARGENTO',
     },
     {
       nome: 'Rafael S.',
@@ -1191,7 +1091,7 @@ function TestimonialsSection() {
       cargo: 'Completou 2x',
       texto: 'Fiz o desafio duas vezes. A segunda com Modo Guerra. Diferente de tudo que já tentei. O app não te deixa fugir.',
       stars: 5,
-      nivel: 'ELITE',
+      nivel: 'SARGENTO',
     },
     {
       nome: 'Bruno R.',
@@ -1205,7 +1105,7 @@ function TestimonialsSection() {
       cargo: 'Dia 21 concluído',
       texto: 'O que diferencia é a consequência real. Outros apps você ignora. Aqui você sente o peso de zerar o streak. Isso funciona.',
       stars: 5,
-      nivel: 'ELITE',
+      nivel: 'SARGENTO',
     },
   ];
 
@@ -1214,7 +1114,7 @@ function TestimonialsSection() {
     'SOLDADO': '#5B8CFF',
     'CABO': '#FFC857',
     'GUERREIRO': '#FF3B3B',
-    'ELITE': '#00C853',
+    'SARGENTO': '#00C853',
   };
 
   return (
@@ -1299,7 +1199,7 @@ function ProgressionSection() {
     { nivel: 'RECRUTA', range: 'Dias 0–3', color: '#888', desc: 'Você está começando. O sistema te coloca nos trilhos.' },
     { nivel: 'SOLDADO', range: 'Dias 4–7', color: '#5B8CFF', desc: 'Primeiro checkpoint. A maioria já desistiu aqui.' },
     { nivel: 'CABO', range: 'Dias 8–14', color: '#FFC857', desc: 'Segundo checkpoint. Você virou rotina.' },
-    { nivel: 'ELITE', range: 'Dias 15–21', color: '#FF3B3B', desc: 'Missão final. Apenas quem não desistiu chega aqui.' },
+    { nivel: 'SARGENTO', range: 'Dias 15–21', color: '#FF3B3B', desc: 'Missão final. Apenas quem não desistiu chega aqui.' },
   ];
 
   return (
@@ -1309,7 +1209,7 @@ function ProgressionSection() {
           <Tag color="red">PROGRESSÃO</Tag>
           <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 54px)', letterSpacing: '4px', color: '#F5F5F5', margin: '16px 0 40px' }}>
             DA RECRUTA<br />
-            <span style={{ color: '#FF3B3B' }}>AO ELITE</span>
+            <span style={{ color: '#FF3B3B' }}>AO SARGENTO</span>
           </h2>
         </Reveal>
 
@@ -1457,7 +1357,7 @@ function FinalCTASection({ onCTA }: { onCTA: () => void }) {
                 ['✓', '21 missões completas (Corpo, Mente e Disciplina)', '#00C853'],
                 ['✓', '4 bônus desbloqueados por progressão', '#00C853'],
                 ['✓', 'PWA — abre no celular sem instalar', '#00C853'],
-                ['✓', 'Sistema de streak e níveis (Recruta → Elite)', '#00C853'],
+                ['✓', 'Sistema de streak e níveis (Recruta → Sargento)', '#00C853'],
                 ['✓', 'Modo Normal e Modo Guerra disponíveis', '#00C853'],
                 ['✓', '7 dias de garantia total', '#00C853'],
               ].map(([check, text, color]) => (
@@ -1609,6 +1509,96 @@ function Footer() {
 }
 
 /* ══════════════════════════════════════════════════
+   SOCIAL PROOF TOAST — floating bottom-left
+══════════════════════════════════════════════════ */
+function SocialProofToast() {
+  const entries = [
+    { nome: 'Lucas M.', cidade: 'São Paulo',       tempo: '2 min atrás' },
+    { nome: 'Rafael S.', cidade: 'Curitiba',        tempo: '7 min atrás' },
+    { nome: 'Thiago C.', cidade: 'Belo Horizonte',  tempo: '14 min atrás' },
+    { nome: 'Pedro A.', cidade: 'Recife',           tempo: '19 min atrás' },
+    { nome: 'Bruno R.', cidade: 'Porto Alegre',     tempo: '23 min atrás' },
+    { nome: 'Caio F.', cidade: 'Fortaleza',         tempo: '31 min atrás' },
+    { nome: 'Diego M.', cidade: 'Brasília',         tempo: '38 min atrás' },
+    { nome: 'André L.', cidade: 'Manaus',           tempo: '46 min atrás' },
+  ];
+
+  const [current, setCurrent] = useState(0);
+  const [visible, setVisible] = useState(false);
+
+  /* First appearance after 4s */
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), 4000);
+    return () => clearTimeout(t);
+  }, []);
+
+  /* Auto-hide after 4s of showing */
+  useEffect(() => {
+    if (!visible) return;
+    const t = setTimeout(() => setVisible(false), 4500);
+    return () => clearTimeout(t);
+  }, [visible, current]);
+
+  /* Show next entry 7s after hiding */
+  useEffect(() => {
+    if (visible) return;
+    const t = setTimeout(() => {
+      setCurrent((c) => (c + 1) % entries.length);
+      setVisible(true);
+    }, 7000);
+    return () => clearTimeout(t);
+  }, [visible]);
+
+  const entry = entries[current];
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          key={current}
+          initial={{ opacity: 0, x: -16, y: 8 }}
+          animate={{ opacity: 1, x: 0, y: 0 }}
+          exit={{ opacity: 0, x: -16 }}
+          transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
+          style={{
+            position: 'fixed',
+            bottom: '28px',
+            left: '20px',
+            zIndex: 200,
+            background: '#141414',
+            border: '1px solid rgba(255,255,255,0.09)',
+            borderLeft: '3px solid #00C853',
+            borderRadius: '8px',
+            padding: '11px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            maxWidth: '270px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.55)',
+          }}
+        >
+          <div
+            style={{
+              width: '8px', height: '8px', borderRadius: '50%',
+              background: '#00C853', flexShrink: 0,
+              boxShadow: '0 0 8px rgba(0,200,83,0.65)',
+            }}
+          />
+          <div>
+            <div style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '13px', fontWeight: 700, color: '#F0F0F0', lineHeight: 1.3 }}>
+              {entry.nome} de {entry.cidade}
+            </div>
+            <div className="font-mono-t" style={{ fontSize: '9px', letterSpacing: '1px', color: '#555', marginTop: '2px' }}>
+              garantiu acesso · {entry.tempo}
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ══════════════════════════════════════════════════
    ROOT PAGE
 ══════════════════════════════════════════════════ */
 export default function VendasPage() {
@@ -1622,6 +1612,7 @@ export default function VendasPage() {
     <>
       <Fonts />
       <StickyHeader onCTA={scrollToCTA} />
+      <SocialProofToast />
 
       <main style={{ background: '#0D0D0D' }}>
         <HeroSection onCTA={scrollToCTA} />
@@ -1632,7 +1623,6 @@ export default function VendasPage() {
         <HowItWorksSection />
         <MissionsSection />
         <BonusSection />
-        <OrderBumpsSection />
         <TestimonialsSection />
         <ProgressionSection />
         <GuaranteeSection />

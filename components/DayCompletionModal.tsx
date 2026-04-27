@@ -43,7 +43,7 @@ export default function DayCompletionModal({
     },
     3: {
       title: 'DIA PERFEITO!',
-      message: 'Você completou todas as 3 missões. Poucos têm essa disciplina. Continue assim e você será ELITE.',
+      message: 'Você completou todas as 3 missões. Poucos têm essa disciplina. Continue assim e você será SARGENTO.',
       emoji: '⚡',
       color: 'text-verde',
       borderColor: 'border-verde',

@@ -37,7 +37,7 @@ export default function ConclusaoPage() {
           
           <p className="text-2xl text-gray-300 mb-8">
             Você completou os 21 dias.<br />
-            Agora você é Elite.
+            Agora você é Sargento.
           </p>
 
           <div className="bg-gray-900 border border-amarelo rounded-lg p-6 mb-8">
