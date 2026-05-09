@@ -1,23 +1,28 @@
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
 
 /* ══════════════════════════════════════════════════
    TYPES — Cakto Webhook Payload
 ══════════════════════════════════════════════════ */
 interface CaktoWebhookPayload {
-  event: string; // "sale.approved"
+  event: string; // "purchase_approved"
+  secret: string; // UUID enviado no body para verificação
   data: {
     id: string;
     customer: {
       email: string;
       name: string;
       phone?: string;
+      docNumber?: string;
     };
     amount: number;
     status: string;
-    created_at: string;
+    createdAt: string;
+    product?: {
+      id: string;
+      name: string;
+    };
     order_bumps?: Array<{
       id: string;
       name: string;
@@ -50,16 +55,9 @@ const resend = new Resend(resendApiKey);
 /* ══════════════════════════════════════════════════
    HELPERS
 ══════════════════════════════════════════════════ */
-function verifyWebhookSignature(payload: string, signature: string | null): boolean {
-  if (!signature) return false;
-
-  const hmac = crypto.createHmac('sha256', webhookSecret);
-  const digest = hmac.update(payload).digest('hex');
-
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(digest)
-  );
+function verifyWebhookSecret(payloadSecret: string): boolean {
+  if (!payloadSecret || !webhookSecret) return false;
+  return payloadSecret.trim() === webhookSecret;
 }
 
 function generatePassword(): string {
@@ -232,24 +230,22 @@ export async function POST(request: NextRequest) {
   try {
     // 1. Ler payload
     const rawBody = await request.text();
-    const signature = request.headers.get('x-cakto-signature');
 
     console.log('📨 Webhook recebido:', {
-      hasSignature: !!signature,
       bodyLength: rawBody.length,
     });
 
-    // 2. Verificar assinatura
-    if (!verifyWebhookSignature(rawBody, signature)) {
-      console.error('⚠️ Assinatura inválida');
+    // 2. Parse payload (secret está no body, não no header)
+    const payload: CaktoWebhookPayload = JSON.parse(rawBody);
+
+    // 3. Verificar secret
+    if (!verifyWebhookSecret(payload.secret)) {
+      console.error('⚠️ Secret inválido');
       return NextResponse.json(
         { error: 'Invalid signature' },
         { status: 401 }
       );
     }
-
-    // 3. Parse payload
-    const payload: CaktoWebhookPayload = JSON.parse(rawBody);
 
     console.log('📦 Payload:', {
       event: payload.event,
@@ -258,7 +254,7 @@ export async function POST(request: NextRequest) {
     });
 
     // 4. Processar apenas evento de compra aprovada
-    if (payload.event !== 'sale.approved') {
+    if (payload.event !== 'purchase_approved') {
       console.log('ℹ️ Evento ignorado:', payload.event);
       return NextResponse.json({ message: 'Event ignored' });
     }
