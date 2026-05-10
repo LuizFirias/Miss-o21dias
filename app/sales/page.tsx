@@ -55,6 +55,14 @@ function Fonts() {
 
       .pulse-red    { animation: pulse-red 2s infinite; }
       .flicker      { animation: flicker 3s ease-in-out infinite; }
+
+      .hero-phone-side { display: flex; }
+      @media (max-width: 700px) {
+        .hero-phone-side { display: none; }
+        .hero-phones-wrap { justify-content: center; }
+        .how-step { flex-direction: column !important; align-items: center !important; }
+        .how-step-phone { display: flex; justify-content: center; width: 100%; }
+      }
       .scan-line::after {
         content: '';
         position: absolute;
@@ -691,14 +699,15 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
               alignItems: 'center',
               justifyContent: 'center',
             }}
+            className="hero-phones-wrap"
           >
-            <div style={{ marginTop: '50px' }}>
+            <div style={{ marginTop: '50px' }} className="hero-phone-side">
               <PhoneMockup screen={<HomeScreen />} />
             </div>
             <div style={{ marginTop: '-20px' }}>
               <PhoneMockup screen={<TrailScreen />} />
             </div>
-            <div style={{ marginTop: '30px' }}>
+            <div style={{ marginTop: '30px' }} className="hero-phone-side">
               <PhoneMockup screen={<MissionScreen />} />
             </div>
           </motion.div>
@@ -1049,6 +1058,7 @@ function HowItWorksSection() {
                   alignItems: 'center',
                   gap: '48px',
                 }}
+                className="how-step"
               >
                 {/* Text */}
                 <div style={{ flex: '1 1 300px' }}>
@@ -1071,7 +1081,7 @@ function HowItWorksSection() {
                 </div>
 
                 {/* Phone */}
-                <div style={{ flex: '0 0 auto', display: 'flex', justifyContent: 'center' }}>
+                <div style={{ flex: '0 0 auto', display: 'flex', justifyContent: 'center' }} className="how-step-phone">
                   <motion.div
                     whileHover={{ y: -8, rotate: 1 }}
                     transition={{ duration: 0.4 }}
