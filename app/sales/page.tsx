@@ -62,6 +62,11 @@ function Fonts() {
         .hero-phones-wrap { justify-content: center; }
         .how-step { flex-direction: column !important; align-items: center !important; }
         .how-step-phone { display: flex; justify-content: center; width: 100%; }
+        .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+        .stat-card { padding: 12px 10px !important; }
+        .stat-val  { font-size: 24px !important; margin-bottom: 4px !important; }
+        .stat-lbl  { font-size: 7px !important; }
+        .section-pad { padding: 48px 20px !important; }
       }
       .scan-line::after {
         content: '';
@@ -466,8 +471,7 @@ function MissionScreen() {
   );
 }
 
-function CheckpointScreen() {
-  return (
+function CheckpointScreen() {  return (
     <div style={{ background: '#0D0D0D', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', textAlign: 'center' }}>
       <div style={{ fontSize: '40px', marginBottom: '10px' }}>🔥</div>
       <div className="font-mono-t" style={{ fontSize: '8px', letterSpacing: '4px', color: '#FFC857', marginBottom: '10px' }}>CHECKPOINT</div>
@@ -479,6 +483,21 @@ function CheckpointScreen() {
       <div style={{ background: '#FF3B3B', padding: '8px 20px', borderRadius: '4px', width: '100%' }}>
         <span className="font-display" style={{ fontSize: '12px', letterSpacing: '3px', color: '#fff' }}>CONTINUAR</span>
       </div>
+    </div>
+  );
+}
+
+function MangaImageScreen() {
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%', background: '#0a0a0a', overflow: 'hidden' }}>
+      <Image
+        src="/bonus-covers/mockup-mangas.jpeg"
+        alt="Biblioteca Mangá"
+        fill
+        sizes="220px"
+        style={{ objectFit: 'cover', objectPosition: 'top' }}
+      />
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,10,10,0.5) 0%, transparent 40%)' }} />
     </div>
   );
 }
@@ -760,16 +779,16 @@ function SocialProofBar() {
   ];
 
   return (
-    <section style={{ padding: '60px 24px', background: '#0a0a0a', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+    <section style={{ padding: '48px 24px', background: '#0a0a0a', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '24px' }}>
+        <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
           {stats.map((s, i) => (
             <Reveal key={s.label} delay={i * 0.08}>
-              <div style={{ textAlign: 'center', padding: '24px', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', background: '#111' }}>
-                <div className="font-display" style={{ fontSize: '44px', letterSpacing: '2px', color: s.color, lineHeight: 1, marginBottom: '8px' }}>
+              <div className="stat-card" style={{ textAlign: 'center', padding: '20px', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', background: '#111' }}>
+                <div className="font-display stat-val" style={{ fontSize: '36px', letterSpacing: '2px', color: '#FF3B3B', lineHeight: 1, marginBottom: '6px' }}>
                   {s.val}
                 </div>
-                <div className="font-mono-t" style={{ fontSize: '8px', letterSpacing: '3px', color: '#555', textTransform: 'uppercase' }}>
+                <div className="font-mono-t stat-lbl" style={{ fontSize: '8px', letterSpacing: '3px', color: '#555', textTransform: 'uppercase' }}>
                   {s.label}
                 </div>
               </div>
@@ -786,11 +805,11 @@ function SocialProofBar() {
 ══════════════════════════════════════════════════ */
 function ProblemSection() {
   const problems = [
-    { icon: '📱', text: 'Abre o celular às 8h e acorda às 23h que não fez nada.' },
-    { icon: '🔁', text: 'Começa toda semana segunda, para na quinta.' },
-    { icon: '💤', text: 'Sabe exatamente o que precisa fazer — e não faz.' },
-    { icon: '😤', text: 'Fica motivado por 3 dias e perde o ritmo no quarto.' },
-    { icon: '⏳', text: 'Diz que vai mudar "quando tiver mais tempo".' },
+    { icon: '✕', text: 'Abre o celular às 8h e acorda às 23h que não fez nada.' },
+    { icon: '↺', text: 'Começa toda semana segunda, para na quinta.' },
+    { icon: '—', text: 'Sabe exatamente o que precisa fazer — e não faz.' },
+    { icon: '✕', text: 'Fica motivado por 3 dias e perde o ritmo no quarto.' },
+    { icon: '↯', text: 'Diz que vai mudar "quando tiver mais tempo".' },
   ];
 
   return (
@@ -818,23 +837,23 @@ function ProblemSection() {
           </p>
         </Reveal>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {problems.map((p, i) => (
             <Reveal key={p.text} delay={i * 0.07}>
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '16px',
-                  padding: '16px 20px',
+                  gap: '14px',
+                  padding: '12px 16px',
                   background: '#0f0f0f',
                   border: '1px solid rgba(255,59,59,0.15)',
                   borderLeft: '3px solid rgba(255,59,59,0.4)',
                   borderRadius: '6px',
                 }}
               >
-                <span style={{ fontSize: '20px', flexShrink: 0 }}>{p.icon}</span>
-                <span style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '16px', fontWeight: 600, color: '#bbb', letterSpacing: '0.3px' }}>
+                <span style={{ fontSize: '16px', flexShrink: 0, color: '#FF3B3B', fontFamily: "'Share Tech Mono', monospace", lineHeight: 1 }}>{p.icon}</span>
+                <span style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '15px', fontWeight: 600, color: '#bbb', letterSpacing: '0.3px' }}>
                   {p.text}
                 </span>
               </div>
@@ -869,7 +888,7 @@ function ProblemSection() {
 ══════════════════════════════════════════════════ */
 function SolutionSection() {
   return (
-    <section style={{ padding: '80px 24px', background: '#0a0a0a' }}>
+    <section style={{ padding: '60px 24px 40px', background: '#0a0a0a' }}>
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         <Reveal>
           <Tag color="yellow">A SOLUÇÃO</Tag>
@@ -894,9 +913,9 @@ function SolutionSection() {
         {/* Three pillars */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '48px' }}>
           {[
-            { label: 'CORPO', color: '#FF3B3B', icon: '💪', desc: 'Exercícios progressivos adaptados ao seu nível. De 20 flexões no dia 1 a 105 no dia 21.' },
-            { label: 'MENTE', color: '#5B8CFF', icon: '🧠', desc: 'Foco, leitura, meditação e definição de objetivos. A parte que todo mundo ignora.' },
-            { label: 'DISCIPLINA', color: '#FFC857', icon: '⚡', desc: 'Hábitos de identidade. Arrumar cama, banho frio, sem celular. O que você faz quando ninguém vê.' },
+            { label: 'CORPO', color: '#FF3B3B', icon: '↑', desc: 'Exercícios progressivos adaptados ao seu nível. De 20 flexões no dia 1 a 105 no dia 21.' },
+            { label: 'MENTE', color: '#5B8CFF', icon: '◈', desc: 'Foco, leitura, meditação e definição de objetivos. A parte que todo mundo ignora.' },
+            { label: 'DISCIPLINA', color: '#FFC857', icon: '↯', desc: 'Hábitos de identidade. Arrumar cama, banho frio, sem celular. O que você faz quando ninguém vê.' },
           ].map((p, i) => (
             <Reveal key={p.label} delay={i * 0.1}>
               <div
@@ -908,7 +927,7 @@ function SolutionSection() {
                   borderRadius: '6px',
                 }}
               >
-                <div style={{ fontSize: '28px', marginBottom: '12px' }}>{p.icon}</div>
+                <div style={{ fontSize: '22px', marginBottom: '10px', color: p.color, fontFamily: "'Share Tech Mono', monospace", lineHeight: 1 }}>{p.icon}</div>
                 <div className="font-mono-t" style={{ fontSize: '9px', letterSpacing: '4px', color: p.color, marginBottom: '10px' }}>{p.label}</div>
                 <p style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '14px', fontWeight: 500, color: '#888', lineHeight: 1.6 }}>{p.desc}</p>
               </div>
@@ -932,7 +951,7 @@ function MementoMoriSection() {
   const weeks = Array.from({ length: WEEKS_PREVIEW }, (_, i) => i + 1);
 
   return (
-    <section style={{ padding: '80px 24px', background: '#0a0a0a', borderTop: '1px solid rgba(255,59,59,0.1)', borderBottom: '1px solid rgba(255,59,59,0.1)' }}>
+    <section style={{ padding: '48px 24px 60px', background: '#0a0a0a', borderTop: '1px solid rgba(255,59,59,0.1)', borderBottom: '1px solid rgba(255,59,59,0.1)' }}>
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
         <Reveal>
           <Tag color="red">MEMENTO MORI</Tag>
@@ -953,32 +972,32 @@ function MementoMoriSection() {
 
         {/* Visual grid */}
         <Reveal delay={0.2}>
-          <div style={{ marginBottom: '48px', padding: '32px', background: '#0D0D0D', border: '1px solid rgba(255,59,59,0.2)', borderRadius: '8px', overflow: 'auto' }}>
+          <div style={{ marginBottom: '40px', padding: '20px', background: '#0D0D0D', border: '1px solid rgba(255,59,59,0.2)', borderRadius: '8px', overflowX: 'auto' }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: `repeat(${WEEKS_PER_ROW}, 1fr)`,
+              gridTemplateColumns: `repeat(${WEEKS_PER_ROW}, minmax(0, 1fr))`,
               gap: '2px',
-              minWidth: '100%',
+              width: '100%',
+              minWidth: `${WEEKS_PER_ROW * 9}px`,
             }}>
               {weeks.map((week, idx) => (
                 <div
                   key={week}
                   style={{
-                    width: '8px',
-                    height: '8px',
-                    background: idx < 260 ? 'rgba(255, 59, 59, 0.3)' : 'rgba(136, 136, 136, 0.4)',
+                    aspectRatio: '1',
+                    background: idx < 260 ? 'rgba(255, 59, 59, 0.35)' : 'rgba(136, 136, 136, 0.35)',
                     borderRadius: '1px',
                   }}
                 />
               ))}
             </div>
-            <div style={{ marginTop: '16px', display: 'flex', gap: '24px', fontSize: '12px', fontFamily: "'Share Tech Mono', monospace" }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '12px', height: '12px', background: 'rgba(255, 59, 59, 0.3)', borderRadius: '2px' }} />
+            <div style={{ marginTop: '14px', display: 'flex', gap: '20px', flexWrap: 'wrap', fontSize: '11px', fontFamily: "'Share Tech Mono', monospace" }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ width: '10px', height: '10px', background: 'rgba(255, 59, 59, 0.35)', borderRadius: '2px', flexShrink: 0 }} />
                 <span style={{ color: '#FF3B3B' }}>SEMANAS PASSADAS</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '12px', height: '12px', background: 'rgba(136, 136, 136, 0.4)', borderRadius: '2px' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ width: '10px', height: '10px', background: 'rgba(136, 136, 136, 0.35)', borderRadius: '2px', flexShrink: 0 }} />
                 <span style={{ color: '#888' }}>SEMANAS RESTANTES</span>
               </div>
             </div>
@@ -1030,6 +1049,12 @@ function HowItWorksSection() {
       title: 'ACUMULA O STREAK',
       desc: 'Cada dia executado avança seu nível. Recruta → Soldado → Cabo → Sargento. Falhar reseta — mas checkpoints nos dias 7 e 14 protegem o progresso que você já conquistou.',
       screen: <CheckpointScreen />,
+    },
+    {
+      num: '05',
+      title: 'DESBLOQUEIE OS MANGÁS DO DIA',
+      desc: 'A cada dia completado, novos volumes da biblioteca mangá são liberados. 46+ volumes de 5 séries — a recompensa visual para quem executa sem parar.',
+      screen: <MangaImageScreen />,
     },
   ];
 
