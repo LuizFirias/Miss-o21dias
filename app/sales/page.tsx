@@ -1901,7 +1901,7 @@ function BonusSection() {
                 lineHeight: 1.5,
               }}
             >
-              Você não compra os bônus. Você compra a Sala do Tempo. Os bônus vêm porque você
+              Você não compra os bônus, você compra a Sala do Tempo e os bônus vêm porque você
               precisa deles para sustentar o que conquistou nos 21 dias.
             </p>
           </div>
@@ -1919,42 +1919,42 @@ function TestimonialsSection() {
     {
       nome: 'Lucas M.',
       cargo: 'Dia 21 concluído',
-      texto: 'Não tem papo de motivação aqui. É missão, é streak, é consequência. Finalizei os 21 dias e minha rotina mudou de verdade.',
+      texto: 'Cara, bom que é sem papinho de motivação, só abrir o app e executar, top.',
       stars: 5,
       nivel: 'SARGENTO',
     },
     {
       nome: 'Rafael S.',
       cargo: 'Dia 14 — Modo Guerra',
-      texto: 'O Modo Guerra é brabo. Falha = dia 1. Isso muda a mentalidade. Você para de tentar e começa a executar porque sabe o custo.',
+      texto: 'O Modo Guerra é brabo, isso muda a mentalidade de vdd você para de tentar e começa a executar porque sabe o custo.',
       stars: 5,
       nivel: 'GUERREIRO',
     },
     {
       nome: 'Thiago C.',
       cargo: 'Semana 2',
-      texto: 'Nunca tinha chegado no dia 10 em nenhum desafio. Com esse app cheguei no dia 14 e percebi que o streak virou identidade.',
+      texto: 'Nunca tinha chegado no dia 10 em nenhum desafio, sérião, com esse app cheguei no dia 14 e quero mais só pelos mangás kkkk.',
       stars: 5,
       nivel: 'CABO',
     },
     {
       nome: 'Pedro A.',
       cargo: 'Completou 2x',
-      texto: 'Fiz o desafio duas vezes. A segunda com Modo Guerra. Diferente de tudo que já tentei. O app não te deixa fugir.',
+      texto: 'Fiz o desafio duas vezes, a segunda com Modo Guerra e é diferente de tudo que já tentei, a biblioteca de vídeos ajuda demais',
       stars: 5,
       nivel: 'SARGENTO',
     },
     {
       nome: 'Bruno R.',
       cargo: 'Semana 1',
-      texto: 'A frase do dia acerta na ferida toda vez. "Você não está cansado… só está acostumado a fugir." Sem papo de coach motivacional.',
+      texto: 'A frase do dia acertou na ferida toda vez, "Você não está cansado… só está acostumado a fugir." Sem papo de coach motivacional.',
       stars: 5,
       nivel: 'SOLDADO',
     },
     {
       nome: 'Caio F.',
       cargo: 'Dia 21 concluído',
-      texto: 'O que diferencia é a consequência real. Outros apps você ignora. Aqui você sente o peso de zerar o streak. Isso funciona.',
+      texto: 'O que diferencia é a consequência real, tu sente o peso quando falha e volta pro dia 01, slc',
       stars: 5,
       nivel: 'SARGENTO',
     },
@@ -2047,10 +2047,10 @@ function TestimonialsSection() {
 ══════════════════════════════════════════════════ */
 function ProgressionSection() {
   const levels = [
-    { nivel: 'RECRUTA', range: 'Dias 0–3', color: '#888', desc: 'Você está começando. O sistema te coloca nos trilhos.' },
-    { nivel: 'SOLDADO', range: 'Dias 4–7', color: '#5B8CFF', desc: 'Primeiro checkpoint. A maioria já desistiu aqui.' },
-    { nivel: 'CABO', range: 'Dias 8–14', color: '#FFC857', desc: 'Segundo checkpoint. Você virou rotina.' },
-    { nivel: 'SARGENTO', range: 'Dias 15–21', color: '#FF3B3B', desc: 'Missão final. Apenas quem não desistiu chega aqui.' },
+    { nivel: 'RECRUTA', range: 'Dias 0–3', color: '#888', desc: 'Você está começando, o sistema te coloca nos trilhos.' },
+    { nivel: 'SOLDADO', range: 'Dias 4–7', color: '#5B8CFF', desc: 'Primeiro checkpoint, a maioria já desistiu aqui.' },
+    { nivel: 'CABO', range: 'Dias 8–14', color: '#FFC857', desc: 'Segundo checkpoint, você virou uma máquina.' },
+    { nivel: 'SARGENTO', range: 'Dias 15–21', color: '#FF3B3B', desc: 'Missão final, apenas quem não desistiu chega aqui.' },
   ];
 
   return (
@@ -2059,7 +2059,7 @@ function ProgressionSection() {
         <Reveal>
           <Tag color="red">PROGRESSÃO</Tag>
           <h2 className="font-display" style={{ fontSize: 'clamp(32px, 5vw, 54px)', letterSpacing: '4px', color: '#F5F5F5', margin: '16px 0 40px' }}>
-            DA RECRUTA<br />
+            DO RECRUTA<br />
             <span style={{ color: '#FF3B3B' }}>AO SARGENTO</span>
           </h2>
         </Reveal>
@@ -2201,7 +2201,10 @@ function FinalCTASection({ onCTA }: { onCTA: () => void }) {
             <div className="font-mono-t" style={{ fontSize: '10px', letterSpacing: '3px', color: '#888', marginBottom: '4px' }}>
               <s style={{ color: '#555' }}>VALOR DOS BÔNUS · R$ 952</s>
             </div>
-            <div className="font-display" style={{ fontSize: '56px', letterSpacing: '4px', color: '#FF3B3B', lineHeight: 1, marginBottom: '4px' }}>R$ 47</div>
+            <div className="font-display" style={{ fontSize: '56px', letterSpacing: '4px', color: '#FF3B3B', lineHeight: 1, marginBottom: '2px' }}>R$ 47</div>
+            <div className="font-mono-t" style={{ fontSize: '11px', letterSpacing: '2px', color: '#888', marginBottom: '6px' }}>
+              ou <span style={{ color: '#F5F5F5', fontWeight: 700 }}>10x de R$ 5,70</span>
+            </div>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '13px', color: '#555', marginBottom: '28px' }}>
               Acesso vitalício · Sem mensalidade · Pagamento único
             </div>
