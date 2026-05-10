@@ -24,7 +24,7 @@ export async function GET(
 
     const data = await getR2Object(key);
 
-    return new NextResponse(data, {
+    return new NextResponse(new Uint8Array(data), {
       headers: {
         'Content-Type': contentType,
         'Cache-Control': isImage ? 'public, max-age=86400' : 'no-store',
