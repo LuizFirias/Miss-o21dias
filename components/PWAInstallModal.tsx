@@ -3,26 +3,24 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInstallPWA } from '@/hooks/useInstallPWA';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function PWAInstallModal() {
   const [showModal, setShowModal] = useState(false);
   const pwa = useInstallPWA();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    // Verificar localStorage para não mostrar novamente hoje
+    if (loading || !user) return;
+
     const lastDismissed = localStorage.getItem('pwa_install_dismissed');
     const today = new Date().toDateString();
 
-    // Mostrar apenas se:
-    // - É mobile
-    // - Não está instalado
-    // - Não foi dismissado hoje
     if (pwa.isMobile && !pwa.isInstalled && lastDismissed !== today) {
-      // Delay de 2 segundos para melhor UX
       const timer = setTimeout(() => setShowModal(true), 2000);
       return () => clearTimeout(timer);
     }
-  }, [pwa.isMobile, pwa.isInstalled]);
+  }, [pwa.isMobile, pwa.isInstalled, user, loading]);
 
   const handleDismiss = () => {
     setShowModal(false);
