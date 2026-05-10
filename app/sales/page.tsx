@@ -1410,6 +1410,78 @@ function FocoMockup() {
   );
 }
 
+function MangaMockup() {
+  const series = [
+    { label: 'BLACK CLOVER', color: '#FF3B3B', vols: 20 },
+    { label: 'TEPPU', color: '#FFC857', vols: 8 },
+    { label: 'ROOSTER FIGHTER', color: '#FF8C42', vols: 5 },
+    { label: 'SHINGEKI BTF', color: '#5B8CFF', vols: 6 },
+    { label: 'INAZUMA ELEVEN', color: '#00C853', vols: 7 },
+  ];
+
+  return (
+    <div
+      style={{
+        width: '210px',
+        height: '420px',
+        borderRadius: '32px',
+        border: '2px solid rgba(255,59,59,0.35)',
+        background: '#0a0a0a',
+        overflow: 'hidden',
+        position: 'relative',
+        boxShadow: '0 32px 64px rgba(0,0,0,0.6), 0 0 28px rgba(255,59,59,0.2), 0 0 0 1px rgba(255,59,59,0.08)',
+        flexShrink: 0,
+      }}
+      className="scan-line"
+    >
+      <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '70px', height: '18px', background: '#0a0a0a', borderRadius: '0 0 12px 12px', zIndex: 10 }} />
+      <div className="noise" style={{ position: 'absolute', inset: 0, zIndex: 5, opacity: 0.3 }} />
+
+      <div style={{ padding: '28px 14px 14px', height: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+          <div className="font-mono-t" style={{ fontSize: '6px', letterSpacing: '2px', color: '#FF3B3B' }}>BÔNUS EXCLUSIVO</div>
+          <div className="font-display" style={{ fontSize: '11px', letterSpacing: '2px', color: '#F5F5F5' }}>MANGÁ</div>
+        </div>
+
+        {/* Progress bar */}
+        <div style={{ height: '3px', background: '#1a1a1a', borderRadius: '2px', overflow: 'hidden', marginBottom: '2px' }}>
+          <div style={{ width: '14%', height: '100%', background: 'linear-gradient(to right, #FF3B3B, #FFC857)' }} />
+        </div>
+        <div className="font-mono-t" style={{ fontSize: '6px', letterSpacing: '1px', color: '#555' }}>3 / 46 VOLUMES DESBLOQUEADOS</div>
+
+        {/* Séries */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', flex: 1, marginTop: '4px' }}>
+          {series.map((s) => (
+            <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '5px 7px', borderRadius: '4px', background: 'rgba(255,255,255,0.02)', borderLeft: `2px solid ${s.color}` }}>
+              <div style={{ flex: 1 }}>
+                <div className="font-display" style={{ fontSize: '8px', letterSpacing: '1.5px', color: '#ccc' }}>{s.label}</div>
+                <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '1px', color: '#444' }}>{s.vols} VOLUMES</div>
+              </div>
+              <div style={{ display: 'flex', gap: '1px' }}>
+                {Array.from({ length: Math.min(s.vols, 6) }).map((_, i) => (
+                  <div key={i} style={{ width: '5px', height: '8px', borderRadius: '1px', background: i < 2 ? s.color : 'rgba(255,255,255,0.08)' }} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div style={{ borderTop: '1px solid rgba(255,59,59,0.15)', paddingTop: '6px', display: 'flex', justifyContent: 'space-between' }}>
+          <div>
+            <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '1px', color: 'rgba(255,255,255,0.25)' }}>VOLUMES</div>
+            <div className="font-display" style={{ fontSize: '14px', letterSpacing: '1px', color: '#FF3B3B' }}>46+</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '1px', color: 'rgba(255,255,255,0.25)' }}>SÉRIES</div>
+            <div className="font-display" style={{ fontSize: '14px', letterSpacing: '1px', color: '#FFC857' }}>5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function BonusSection() {
   const bonuses: Array<{
     num: string;
@@ -1421,7 +1493,7 @@ function BonusSection() {
     valor: string;
     color: string;
     capa?: string;
-    custom?: 'foco';
+    custom?: 'foco' | 'manga';
   }> = [
     {
       num: '01',
@@ -1504,9 +1576,25 @@ function BonusSection() {
       color: '#5B8CFF',
       custom: 'foco',
     },
+    {
+      num: '06',
+      dia: 'IMEDIATO',
+      titulo: 'Biblioteca Mangá',
+      sub: '46+ volumes de 5 séries — liberados conforme você avança',
+      desc:
+        'Mais de 46 volumes de mangá curados para quem executa. Black Clover, Teppu, Rooster Fighter, Shingeki no Kyojin BTF e Inazuma Eleven. Bônus que você desbloqueia dia a dia.',
+      bullets: [
+        '46+ volumes em 5 séries selecionadas a dedo',
+        'Leitura direto no PWA — sem app extra',
+        'Volumes liberados conforme você avança na trilha',
+      ],
+      valor: 'R$ 147',
+      color: '#FF3B3B',
+      custom: 'manga',
+    },
   ];
 
-  const totalBonus = 'R$ 805';
+  const totalBonus = 'R$ 952';
 
   return (
     <section style={{ padding: '80px 24px', position: 'relative', overflow: 'hidden' }}>
@@ -1537,7 +1625,7 @@ function BonusSection() {
               lineHeight: 1,
             }}
           >
-            5 BÔNUS QUE<br />
+            6 BÔNUS QUE<br />
             <span style={{ color: '#FFC857' }}>VOCÊ DESBLOQUEIA EXECUTANDO</span>
           </h2>
           <p
@@ -1607,6 +1695,8 @@ function BonusSection() {
                   <div style={{ flexShrink: 0, position: 'relative' }}>
                     {b.custom === 'foco' ? (
                       <FocoMockup />
+                    ) : b.custom === 'manga' ? (
+                      <MangaMockup />
                     ) : (
                       <BonusPhoneMockup capa={b.capa} label={b.titulo} color={b.color} />
                     )}
@@ -2072,9 +2162,9 @@ function FinalCTASection({ onCTA }: { onCTA: () => void }) {
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(to right, #FF3B3B, #FFC857)' }} />
 
             <div className="font-mono-t" style={{ fontSize: '9px', letterSpacing: '4px', color: '#555', marginBottom: '8px' }}>SALA DO TEMPO 21</div>
-            {/* Anchor de valor — bônus avulsos somam R$ 805 */}
+            {/* Anchor de valor — bônus avulsos somam R$ 952 */}
             <div className="font-mono-t" style={{ fontSize: '10px', letterSpacing: '3px', color: '#888', marginBottom: '4px' }}>
-              <s style={{ color: '#555' }}>VALOR DOS BÔNUS · R$ 805</s>
+              <s style={{ color: '#555' }}>VALOR DOS BÔNUS · R$ 952</s>
             </div>
             <div className="font-display" style={{ fontSize: '56px', letterSpacing: '4px', color: '#FF3B3B', lineHeight: 1, marginBottom: '4px' }}>R$ 47</div>
             <div style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '13px', color: '#555', marginBottom: '28px' }}>
@@ -2085,7 +2175,7 @@ function FinalCTASection({ onCTA }: { onCTA: () => void }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px', textAlign: 'left' }}>
               {[
                 ['✓', '21 missões completas (Corpo, Mente e Disciplina)', '#00C853'],
-                ['✓', '5 bônus desbloqueados por progressão (R$ 805 em valor)', '#00C853'],
+                ['✓', '6 bônus desbloqueados por progressão (R$ 952 em valor)', '#00C853'],
                 ['✓', 'FOCO: 50+ vídeos curados + áudios para 3 modos de execução', '#00C853'],
                 ['✓', 'PWA — abre no celular sem instalar', '#00C853'],
                 ['✓', 'Sistema de streak e níveis (Recruta → Sargento)', '#00C853'],
