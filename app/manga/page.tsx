@@ -7,27 +7,24 @@ import Layout from '@/components/Layout';
 import { useAuth } from '@/hooks/useAuth';
 import MANGAS, { type Manga } from '@/data/mangas';
 
-type AccessState = 'disponivel' | 'bloqueado-dia' | 'bloqueado-premium';
+type AccessState = 'disponivel' | 'bloqueado-dia';
 
 const BOSS_DAYS = [7, 14, 21];
 
-function getAccessState(manga: Manga, diaAtual: number, mangaAcesso: boolean): AccessState {
+function getAccessState(manga: Manga, diaAtual: number): AccessState {
   if (manga.diaLiberacao > diaAtual) return 'bloqueado-dia';
-  if (manga.plano === 'premium' && !mangaAcesso) return 'bloqueado-premium';
   return 'disponivel';
 }
 
-function MangaCard({ manga, diaAtual, mangaAcesso, onClick }: {
+function MangaCard({ manga, diaAtual, onClick }: {
   manga: Manga;
   diaAtual: number;
-  mangaAcesso: boolean;
   onClick: () => void;
 }) {
-  const access = getAccessState(manga, diaAtual, mangaAcesso);
+  const access = getAccessState(manga, diaAtual);
   const isBossDay = BOSS_DAYS.includes(manga.diaLiberacao);
   const isFinal = manga.diaLiberacao === 21;
   const isAvailable = access === 'disponivel';
-  const isPremiumLocked = access === 'bloqueado-premium';
 
   return (
     <motion.button
@@ -56,22 +53,15 @@ function MangaCard({ manga, diaAtual, mangaAcesso, onClick }: {
         {/* Overlay de bloqueio */}
         {!isAvailable && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 z-10">
-            {isPremiumLocked ? (
-              <>
-                <span className="text-2xl">🔒</span>
-                <span className="font-mono text-[8px] tracking-[2px] text-amarelo uppercase">Premium</span>
-              </>
-            ) : (
-              <>
-                <svg width="20" height="22" viewBox="0 0 16 18" fill="none">
-                  <rect x="2" y="8" width="12" height="9" rx="2" stroke="#444" strokeWidth="1.5" />
-                  <path d="M5 8V5.5a3 3 0 016 0V8" stroke="#444" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-                <span className="font-mono text-[8px] tracking-[2px] text-branco-dim/50 uppercase">
-                  Dia {manga.diaLiberacao}
-                </span>
-              </>
-            )}
+            <>
+              <svg width="20" height="22" viewBox="0 0 16 18" fill="none">
+                <rect x="2" y="8" width="12" height="9" rx="2" stroke="#444" strokeWidth="1.5" />
+                <path d="M5 8V5.5a3 3 0 016 0V8" stroke="#444" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              <span className="font-mono text-[8px] tracking-[2px] text-branco-dim/50 uppercase">
+                Dia {manga.diaLiberacao}
+              </span>
+            </>
           </div>
         )}
 
@@ -108,11 +98,6 @@ function MangaCard({ manga, diaAtual, mangaAcesso, onClick }: {
           {manga.descricao}
         </p>
 
-        {isPremiumLocked && (
-          <div className="mt-2 text-center py-1.5 rounded bg-amarelo/10 border border-amarelo/30">
-            <span className="font-mono text-[8px] tracking-[2px] text-amarelo uppercase">Desbloquear →</span>
-          </div>
-        )}
       </div>
     </motion.button>
   );
@@ -121,7 +106,7 @@ function MangaCard({ manga, diaAtual, mangaAcesso, onClick }: {
 export default function MangaPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
-  const [filtro, setFiltro] = useState<'todos' | 'disponiveis' | 'premium'>('todos');
+  const [filtro, setFiltro] = useState<'todos' | 'disponiveis'>('todos');
 
   useEffect(() => {
     if (!loading && !user) router.push('/login');
@@ -139,12 +124,10 @@ export default function MangaPage() {
   }
 
   const diaAtual = user.dia_atual || 1;
-  const mangaAcesso = user.manga_acesso || false;
-  const totalDisponiveis = MANGAS.filter(m => getAccessState(m, diaAtual, mangaAcesso) === 'disponivel').length;
+  const totalDisponiveis = MANGAS.filter(m => getAccessState(m, diaAtual) === 'disponivel').length;
 
   const mangasFiltrados = MANGAS.filter(m => {
-    if (filtro === 'disponiveis') return getAccessState(m, diaAtual, mangaAcesso) === 'disponivel';
-    if (filtro === 'premium') return m.plano === 'premium';
+    if (filtro === 'disponiveis') return getAccessState(m, diaAtual) === 'disponivel';
     return true;
   });
 
@@ -184,7 +167,7 @@ export default function MangaPage() {
         {/* Filtros */}
         <div className="px-4 max-w-md mx-auto mb-4">
           <div className="flex gap-2">
-            {([['todos', 'TODOS'], ['disponiveis', 'DISPONÍVEIS'], ['premium', 'PREMIUM']] as const).map(([key, label]) => (
+            {([['todos', 'TODOS'], ['disponiveis', 'DISPONÍVEIS']] as const).map(([key, label]) => (
               <button
                 key={key}
                 onClick={() => setFiltro(key)}
@@ -213,7 +196,6 @@ export default function MangaPage() {
                 <MangaCard
                   manga={manga}
                   diaAtual={diaAtual}
-                  mangaAcesso={mangaAcesso}
                   onClick={() => router.push(`/manga/${manga.id}`)}
                 />
               </motion.div>

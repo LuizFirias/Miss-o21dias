@@ -6,16 +6,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import MANGAS from '@/data/mangas';
 
-type AccessState = 'disponivel' | 'bloqueado-dia' | 'bloqueado-premium';
+type AccessState = 'disponivel' | 'bloqueado-dia';
 
 function getAccessState(
   diaLiberacao: number,
-  plano: 'basico' | 'premium',
   diaAtual: number,
-  mangaAcesso: boolean
 ): AccessState {
   if (diaLiberacao > diaAtual) return 'bloqueado-dia';
-  if (plano === 'premium' && !mangaAcesso) return 'bloqueado-premium';
   return 'disponivel';
 }
 
@@ -237,8 +234,7 @@ export default function MangaReaderPage() {
   }
 
   const diaAtual = user.dia_atual || 1;
-  const mangaAcesso = user.manga_acesso || false;
-  const access = getAccessState(manga.diaLiberacao, manga.plano, diaAtual, mangaAcesso);
+  const access = getAccessState(manga.diaLiberacao, diaAtual);
 
   if (access !== 'disponivel') {
     return (
@@ -248,16 +244,12 @@ export default function MangaReaderPage() {
           animate={{ opacity: 1, scale: 1 }}
           className="w-full max-w-sm bg-cinza-escuro border border-cinza-borda rounded-2xl p-8 text-center"
         >
-          <div className="text-4xl mb-4">
-            {access === 'bloqueado-premium' ? '⭐' : '🔒'}
-          </div>
+          <div className="text-4xl mb-4">🔒</div>
           <h2 className="font-display text-xl tracking-wider text-branco mb-2">
-            {access === 'bloqueado-premium' ? 'CONTEÚDO PREMIUM' : 'CONTEÚDO BLOQUEADO'}
+            CONTEÚDO BLOQUEADO
           </h2>
           <p className="font-body text-sm text-branco-dim leading-relaxed mb-6">
-            {access === 'bloqueado-premium'
-              ? 'Este volume é exclusivo para o plano premium. Complete a missão ou desbloqueie agora.'
-              : `Este volume será liberado quando você completar o Dia ${manga.diaLiberacao}.`}
+            {`Este volume será liberado quando você completar o Dia ${manga.diaLiberacao}.`}
           </p>
           <button
             onClick={() => router.push('/manga')}
