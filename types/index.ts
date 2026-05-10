@@ -1,7 +1,7 @@
 export type Nivel = 'iniciante' | 'intermediario' | 'avancado';
 export type Modo = 'normal' | 'guerra';
 export type StatusDia = 'feito' | 'falhou';
-export type Limitacao = 'nenhuma' | 'joelho' | 'lombar' | 'ombro';
+export type Limitacao = 'nenhuma' | 'joelho' | 'lombar' | 'ambas';
 
 export interface User {
   id: string;
@@ -13,6 +13,8 @@ export interface User {
   streak: number;
   nivel_progressao: number;
   limitacao: Limitacao;
+  data_nascimento?: string;
+  idade?: number;
   onboarding_completo?: boolean;
   senha_alterada?: boolean;
   ultimo_acesso_dia?: string;
@@ -22,6 +24,7 @@ export interface User {
   continuidade_30dias?: boolean;
   disparo_rapido_acesso?: boolean;
   foco_acesso?: boolean;
+  manga_acesso?: boolean;
   created_at: string;
 }
 
