@@ -1731,7 +1731,12 @@ function BonusSection() {
                     {b.custom === 'foco' ? (
                       <FocoMockup />
                     ) : b.custom === 'manga' ? (
-                      <MangaMockup />
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <div style={{ transform: 'rotate(-3deg)', transformOrigin: 'center bottom' }}>
+                          <BonusPhoneMockup capa="/bonus-covers/mockup-mangas.jpeg" label="Biblioteca Mangá" color="#FF3B3B" />
+                        </div>
+                        <MangaMockup />
+                      </div>
                     ) : (
                       <BonusPhoneMockup capa={b.capa} label={b.titulo} color={b.color} />
                     )}
