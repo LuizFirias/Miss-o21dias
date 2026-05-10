@@ -1,9 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Sanitiza variáveis: trim de espaços/quebras e remove trailing slash da URL.
-// Trailing slash ou whitespace na env (comum no Vercel) gera o erro
-// "Invalid path specified in request URL" nas chamadas ao Supabase.
-const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim().replace(/\/+$/, '');
+// Sanitiza a URL: remove espaços, trailing slash e sufixos /rest/v1 ou /auth/v1
+// que quando presentes na env causam "Invalid path specified in request URL".
+const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || '')
+  .trim()
+  .replace(/\/+$/, '')
+  .replace(/\/(rest|auth)\/v\d+.*$/, '');
 const supabaseAnonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').trim();
 
 if (!supabaseUrl || !supabaseAnonKey) {

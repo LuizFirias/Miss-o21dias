@@ -1,89 +1,233 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import Layout from '@/components/Layout';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
+import StepFlow from '@/components/botao-acao/StepFlow';
+import LockedOverlay from '@/components/botao-acao/LockedOverlay';
 
+/* ─────────────────────────────────────────────
+   STEP IDS (must match StepFlow)
+───────────────────────────────────────────── */
+const STEPS = [
+  { id: "trigger",   label: "INÍCIO" },
+  { id: "countdown", label: "CONTAGEM" },
+  { id: "physical",  label: "CORPO" },
+  { id: "choice",    label: "FOCO" },
+  { id: "execute",   label: "AÇÃO" },
+  { id: "done",      label: "FIM" },
+];
+
+/* ─────────────────────────────────────────────
+   STEP PROGRESS DOTS
+───────────────────────────────────────────── */
+function StepDots({ current, total }: { current: number; total: number }) {
+  return (
+    <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+      {Array.from({ length: total }).map((_, i) => (
+        <motion.div
+          key={i}
+          animate={{
+            width: i === current ? "20px" : "5px",
+            background:
+              i < current
+                ? "#FFC857"
+                : i === current
+                ? "#FF8C42"
+                : "rgba(255,255,255,0.1)",
+          }}
+          transition={{ duration: 0.2 }}
+          style={{ height: "3px", borderRadius: "3px" }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   HEADER
+───────────────────────────────────────────── */
+function Header({ stepIndex, onClose }: { stepIndex: number; onClose: () => void }) {
+  const total = STEPS.length;
+  const label = STEPS[stepIndex]?.label ?? "";
+  const isFirst = stepIndex === 0;
+  const isDone = stepIndex === total - 1;
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0 20px",
+        height: "100%",
+      }}
+    >
+      {/* Left: wordmark */}
+      <div>
+        <span
+          style={{
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: "7px",
+            letterSpacing: "3px",
+            color: "rgba(255,255,255,0.2)",
+            display: "block",
+            textTransform: "uppercase",
+          }}
+        >
+          SALA DO TEMPO 21
+        </span>
+        <span
+          style={{
+            fontFamily: "'Bebas Neue', cursive",
+            fontSize: "13px",
+            letterSpacing: "2px",
+            color: isDone ? "#FFC857" : "rgba(255,255,255,0.35)",
+          }}
+        >
+          {isDone ? "CONCLUÍDO" : "DISPARO RÁPIDO"}
+        </span>
+      </div>
+
+      {/* Center: dots */}
+      <StepDots current={stepIndex} total={total} />
+
+      {/* Right: close */}
+      <button
+        onClick={onClose}
+        style={{
+          background: "none",
+          border: "1px solid rgba(255,255,255,0.1)",
+          borderRadius: "4px",
+          padding: "5px 9px",
+          cursor: "pointer",
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: "9px",
+            color: "rgba(255,255,255,0.3)",
+          }}
+        >
+          ✕
+        </span>
+      </button>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   PAGE
+───────────────────────────────────────────── */
 export default function DisparoRapidoPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [stepIndex, setStepIndex] = useState(0);
+
+  // Verificar se tem acesso ao Disparo Rápido
+  const isUnlocked = user?.disparo_rapido_acesso || false;
 
   useEffect(() => {
     if (loading) return;
     if (!user) {
       router.push('/login');
-      return;
-    }
-    
-    // Verificar se tem acesso
-    if (!user.disparo_rapido_acesso) {
-      router.push('/arsenal');
     }
   }, [user, loading, router]);
 
-  if (loading || !user || !user.disparo_rapido_acesso) {
+  const handleStepChange = useCallback((idx: number) => setStepIndex(idx), []);
+  const handleClose = useCallback(() => router.push('/arsenal'), [router]);
+  const handleFinish = useCallback(() => router.push('/arsenal'), [router]);
+  
+  // Simulação de desbloqueio (em produção, redirecionar para checkout)
+  const handleUnlock = useCallback(() => {
+    // TODO: Em produção, redirecionar para página de checkout/pagamento
+    // router.push('/checkout/disparo-rapido');
+    alert('Função de desbloqueio em desenvolvimento.\n\nEm produção, isso redirecionará para o checkout.');
+  }, []);
+
+  if (loading) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="font-mono text-sm text-branco-dim">Carregando...</div>
-        </div>
-      </Layout>
+      <div className="min-h-screen flex items-center justify-center bg-preto">
+        <div className="font-mono text-sm text-branco-dim">Carregando...</div>
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-preto flex flex-col items-center justify-center px-6 text-center">
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; background: #0D0D0D; -webkit-tap-highlight-color: transparent; }
+        button { -webkit-appearance: none; appearance: none; }
+        input::placeholder { color: rgba(255,255,255,0.2); }
+        input:focus { border-color: rgba(255,59,59,0.6) !important; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .page-in { animation: fadeIn 0.3s ease forwards; }
+      `}</style>
+
+      <div
+        className="page-in"
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "#0D0D0D",
+          display: "flex",
+          justifyContent: "center",
+          overflow: "hidden",
+        }}
+      >
+        {/* Ambient glow — yellow/orange top-right */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          animate={{ opacity: [0.4, 0.7, 0.4] }}
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+          style={{
+            position: "absolute",
+            top: "-80px",
+            right: "-80px",
+            width: "260px",
+            height: "260px",
+            background:
+              "radial-gradient(circle, rgba(255,140,66,0.07) 0%, transparent 70%)",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* Content column */}
+        <div
+          style={{
+            width: "100%",
+            maxWidth: "390px",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            position: "relative",
+          }}
         >
-          <div className="text-6xl mb-6">⚡</div>
-          
-          <div className="font-mono text-[9px] tracking-[3px] text-amarelo uppercase mb-2">
-            Arsenal Avançado
-          </div>
-          
-          <h1 className="font-display text-4xl tracking-wider text-branco mb-4">
-            DISPARO RÁPIDO
-            <br />
-            <span className="text-amarelo">SISTEMA DE EXECUÇÃO IMEDIATA</span>
-          </h1>
-
-          <p className="font-mono text-[10px] tracking-[2px] text-branco-dim uppercase mb-8">
-            Zero Procrastinação
-          </p>
-
-          <div className="max-w-md mx-auto mb-8">
-            <p className="font-body text-base text-branco-dim/60 leading-relaxed">
-              Framework completo para transformar qualquer ideia em ação em menos de 24 horas.
-            </p>
+          {/* ── HEADER ── */}
+          <div style={{ height: "60px", flexShrink: 0 }}>
+            <Header stepIndex={stepIndex} onClose={handleClose} />
           </div>
 
-          <div className="bg-cinza-escuro border border-amarelo/30 rounded-lg p-6 mb-8 max-w-md mx-auto">
-            <div className="font-mono text-[9px] tracking-[3px] text-amarelo uppercase mb-3">
-              ⚡ Acesso Liberado
-            </div>
-            <p className="font-body text-sm text-branco-dim leading-relaxed">
-              Conteúdo exclusivo em desenvolvimento.
-              <br /><br />
-              Em breve você terá acesso ao framework completo do Disparo Rápido: 
-              protocolos de execução imediata, templates de ação instantânea e 
-              sistema anti-procrastinação definitivo.
-            </p>
-          </div>
+          {/* ── THIN SEPARATOR ── */}
+          <div style={{ height: "1px", background: "rgba(255,255,255,0.05)", flexShrink: 0 }} />
 
-          <button
-            onClick={() => router.push('/arsenal')}
-            className="bg-transparent border border-amarelo/40 hover:border-amarelo hover:bg-amarelo/10 text-amarelo font-display text-base tracking-[3px] py-3 px-8 rounded transition-all"
-          >
-            VOLTAR PARA ARSENAL
-          </button>
-        </motion.div>
+          {/* ── STEP FLOW (flex: 1) ── */}
+          <StepFlow
+            onFinish={handleFinish}
+            onStepChange={handleStepChange}
+          />
+
+          {/* ── LOCKED OVERLAY (absolute, above everything) ── */}
+          <AnimatePresence>
+            {!isUnlocked && (
+              <LockedOverlay onUnlock={handleUnlock} />
+            )}
+          </AnimatePresence>
+        </div>
       </div>
-    </Layout>
+    </>
   );
 }

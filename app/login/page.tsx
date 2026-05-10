@@ -259,6 +259,24 @@ export default function LoginPage() {
               {message}
             </motion.p>
           )}
+
+          {/* Divisor */}
+          <div className="my-5 flex items-center gap-3">
+            <div className="flex-1 h-[1px] bg-cinza-borda" />
+            <span className="text-[9px] text-branco-dim uppercase tracking-wider">OU</span>
+            <div className="flex-1 h-[1px] bg-cinza-borda" />
+          </div>
+
+          {/* Botão Adquirir Acesso */}
+          <motion.button
+            type="button"
+            onClick={() => router.push('/sales')}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full bg-transparent border-2 border-vermelho rounded py-2.5 text-vermelho font-display text-sm tracking-[2px] transition-colors hover:bg-vermelho/5"
+          >
+            ADQUIRIR ACESSO
+          </motion.button>
         </motion.form>
       </motion.div>
     </div>

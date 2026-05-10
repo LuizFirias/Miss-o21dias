@@ -25,9 +25,9 @@ interface ArsenalProduct {
 const ARSENAL_PRODUTOS: ArsenalProduct[] = [
   {
     id: 'modo-guerra',
-    titulo: 'MODO GUERRA (Sem reset livre)',
+    titulo: '',
     descricao:
-      'Missões secretas de elite. Treinos intensificados. Protocolo avançado para quem quer ir além do limite.',
+      'Quer testar seus limites? potencialize os seus objetivos do dia com intensidade máxima.',
     capa: '/order-bumps/modo-guerra.png',
     corDestaque: '#FF3B3B',
     rota: '/arsenal/modo-guerra',
@@ -36,9 +36,9 @@ const ARSENAL_PRODUTOS: ArsenalProduct[] = [
   },
   {
     id: 'disparo-rapido',
-    titulo: 'DISPARO RÁPIDO',
+    titulo: '',
     descricao:
-      'Framework completo para transformar qualquer ideia em ação em menos de 24 horas. Zero procrastinação.',
+      'Travou? sem problemas, ative agora o disparo rápido e volte com tudo.',
     capa: '/order-bumps/disparo-rapido.png',
     corDestaque: '#FFC857',
     rota: '/arsenal/disparo-rapido',
@@ -320,7 +320,7 @@ export default function ArsenalPage() {
               <br />
               Caso você adquiriu algum produto e não está vendo aqui, entre em contato com o
               suporte através de
-              <span className="text-branco font-semibold"> contato@saladotempo.site</span>.
+              <span className="text-branco font-semibold"> suporte.saladotempo21@gmail.com</span>.
             </p>
           </div>
         </motion.div>

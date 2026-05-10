@@ -188,60 +188,239 @@ function PhoneMockup({ screen }: { screen: React.ReactNode }) {
 /* Phone screen variants */
 function HomeScreen() {
   return (
-    <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', height: '100%', background: '#0D0D0D' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-        <div>
-          <div className="font-mono-t" style={{ fontSize: '6px', letterSpacing: '2px', color: '#888' }}>SALA DO TEMPO</div>
-          <div className="font-display" style={{ fontSize: '14px', letterSpacing: '2px', color: '#FF3B3B' }}>DIA 8/21</div>
-        </div>
-        <div style={{ textAlign: 'right' }}>
-          <div className="font-mono-t" style={{ fontSize: '6px', letterSpacing: '1px', color: '#888' }}>STREAK</div>
-          <div className="font-display" style={{ fontSize: '18px', color: '#FFC857' }}>8🔥</div>
-        </div>
-      </div>
-      {/* Progress */}
-      <div style={{ marginBottom: '10px' }}>
-        <div style={{ height: '2px', background: '#1a1a1a', borderRadius: '2px', overflow: 'hidden' }}>
-          <div style={{ width: '38%', height: '100%', background: 'linear-gradient(to right, #FF3B3B, #FFC857)' }} />
-        </div>
-        <div className="font-mono-t" style={{ fontSize: '7px', color: '#555', marginTop: '3px', letterSpacing: '1px' }}>38% CONCLUÍDO</div>
-      </div>
+    <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', height: '100%', background: '#0D0D0D' }}>
       {/* Frase */}
-      <div style={{ padding: '8px 10px', marginBottom: '8px', borderLeft: '2px solid #FF3B3B' }}>
-        <div className="font-mono-t" style={{ fontSize: '7.5px', color: '#FF3B3B', letterSpacing: '0.5px', lineHeight: 1.5 }}>
+      <div style={{ padding: '6px 8px', marginBottom: '8px', borderLeft: '2px solid #FF3B3B' }}>
+        <div className="font-mono-t" style={{ fontSize: '7px', color: '#FF3B3B', letterSpacing: '0.5px', lineHeight: 1.5 }}>
           "Enquanto você pensa,<br />alguém já fez."
         </div>
       </div>
-      {/* Mission cards */}
-      {[
-        { label: 'CORPO', text: 'Flexões 45 · Burpees 20', color: '#FF3B3B', done: true },
-        { label: 'MENTE', text: '20 min de foco total', color: '#5B8CFF', done: false },
-        { label: 'DISCIPLINA', text: 'Sem celular antes das 9h', color: '#FFC857', done: false },
-      ].map((m) => (
-        <div
-          key={m.label}
-          style={{
-            padding: '7px 10px',
-            marginBottom: '5px',
-            background: '#111',
-            borderLeft: `2px solid ${m.done ? '#00C853' : m.color}`,
-            borderRadius: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div>
-            <div className="font-mono-t" style={{ fontSize: '6px', color: m.done ? '#00C853' : m.color, letterSpacing: '2px' }}>{m.label}</div>
-            <div style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '9px', color: m.done ? '#555' : '#ccc', textDecoration: m.done ? 'line-through' : 'none' }}>{m.text}</div>
+
+      {/* Stats row */}
+      <div style={{ background: '#111', border: '1px solid #1a1a1a', borderRadius: '4px', padding: '6px 8px', marginBottom: '6px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '1px', color: '#555' }}>DIAS</div>
+            <div className="font-display" style={{ fontSize: '13px', color: '#FF3B3B', lineHeight: 1 }}>5/21</div>
           </div>
-          <span style={{ fontSize: '12px' }}>{m.done ? '✓' : '○'}</span>
+          <div style={{ textAlign: 'center' }}>
+            <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '1px', color: '#555' }}>PROGRESSO</div>
+            <div className="font-display" style={{ fontSize: '13px', color: '#FF8C42', lineHeight: 1 }}>24%</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '1px', color: '#555' }}>NÍVEL</div>
+            <div className="font-display" style={{ fontSize: '11px', color: '#FFC857', lineHeight: 1 }}>SOLDADO</div>
+          </div>
         </div>
-      ))}
-      {/* CTA */}
-      <div style={{ marginTop: 'auto', padding: '8px 0', background: '#FF3B3B', borderRadius: '4px', textAlign: 'center' }}>
-        <span className="font-display" style={{ fontSize: '12px', letterSpacing: '3px', color: '#fff' }}>INICIAR MISSÃO</span>
+        <div style={{ height: '2px', background: '#1a1a1a', borderRadius: '2px', overflow: 'hidden' }}>
+          <div style={{ width: '24%', height: '100%', background: 'linear-gradient(to right, #FF3B3B, #FFC857)' }} />
+        </div>
+      </div>
+
+      {/* Trail header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', paddingBottom: '4px', borderBottom: '1px solid rgba(255,59,59,0.15)' }}>
+        <div>
+          <div className="font-display" style={{ fontSize: '11px', letterSpacing: '2px', color: '#F5F5F5' }}>TRILHA DE EVOLUÇÃO</div>
+          <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '1px', color: '#555' }}>Toque no dia atual</div>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div className="font-mono-t" style={{ fontSize: '5px', color: '#555', letterSpacing: '1px' }}>DIA ATUAL</div>
+          <div className="font-display" style={{ fontSize: '20px', color: '#FF3B3B', lineHeight: 1 }}>06</div>
+        </div>
+      </div>
+
+      {/* Mini trail preview (3 nodes) */}
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        {/* Paths */}
+        <svg style={{ position: 'absolute', inset: 0, overflow: 'visible' }} width="200" height="300">
+          <path d="M 100 22 C 100 42, 155 42, 155 62" fill="none" stroke="#FF3B3B" strokeWidth="1.5" opacity="0.6" />
+          <path d="M 155 62 C 155 82, 100 82, 100 102" fill="none" stroke="#FF3B3B" strokeWidth="1.5" opacity="0.6" />
+          <path d="M 100 102 C 100 122, 45 122, 45 142" fill="none" stroke="#FF8C42" strokeWidth="1.5" opacity="0.5" />
+          <path d="M 45 142 C 45 162, 100 162, 100 182" fill="none" stroke="#2A2A2A" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.5" />
+        </svg>
+        {/* Completed nodes */}
+        {[
+          { x: 100, y: 22, label: '04', done: true },
+          { x: 155, y: 62, label: '05', done: true },
+          { x: 100, y: 102, label: '06', current: true },
+          { x: 45, y: 142, label: '07', checkpoint: true },
+          { x: 100, y: 182, label: '08', locked: true },
+        ].map((n) => (
+          <div
+            key={n.label}
+            style={{
+              position: 'absolute',
+              left: n.x,
+              top: n.y,
+              transform: 'translate(-50%, -50%)',
+              width: n.current ? 32 : n.done ? 24 : 20,
+              height: n.current ? 32 : n.done ? 24 : 20,
+              borderRadius: '50%',
+              background: n.current ? 'linear-gradient(135deg, #FF3B3B, #FF8C42)' : n.done ? '#161616' : '#0f0f0f',
+              border: `2px solid ${n.current ? '#FF3B3B' : n.done ? 'rgba(255,59,59,0.45)' : '#1e1e1e'}`,
+              boxShadow: n.current ? '0 0 14px rgba(255,59,59,0.55)' : n.done ? '0 0 6px rgba(255,59,59,0.18)' : 'none',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              opacity: n.locked ? 0.35 : 1,
+              zIndex: n.current ? 5 : 1,
+            }}
+          >
+            {n.done && <span style={{ color: '#FF3B3B', fontSize: '9px', fontWeight: 700 }}>✓</span>}
+            {n.current && <span className="font-display" style={{ fontSize: '9px', color: '#fff', letterSpacing: '1px' }}>06</span>}
+            {(n.checkpoint || n.locked) && <span style={{ fontSize: '8px' }}>🔒</span>}
+          </div>
+        ))}
+        {/* HOJE label */}
+        <div style={{ position: 'absolute', left: 100, top: 119, transform: 'translateX(-50%)', fontFamily: "'Share Tech Mono', monospace", fontSize: '5px', letterSpacing: '2px', color: '#FF3B3B', whiteSpace: 'nowrap' }}>
+          ▶ HOJE
+        </div>
+        {/* DIA 7 ★ label */}
+        <div style={{ position: 'absolute', left: 45, top: 155, transform: 'translateX(-50%)', fontFamily: "'Share Tech Mono', monospace", fontSize: '5px', letterSpacing: '1px', color: 'rgba(255,200,87,0.6)', whiteSpace: 'nowrap' }}>
+          ★ DIA 7
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TrailScreen() {
+  // Full trail view — shows days 1–8, day 6 = current
+  const W_USE = 200; // usable width (220 - 10px padding each side)
+  const PAD_X = 10;
+  const XC = PAD_X + W_USE * 0.50; // 110
+  const XL = PAD_X + W_USE * 0.22; // 54
+  const XR = PAD_X + W_USE * 0.78; // 166
+
+  const Y0 = 0; // first node relative to trail container
+  const SP = 43; // spacing between node centers
+
+  const nodes = [
+    { dia: 1,  x: XC, status: 'completed' },
+    { dia: 2,  x: XR, status: 'completed' },
+    { dia: 3,  x: XR, status: 'completed' },
+    { dia: 4,  x: XC, status: 'completed' },
+    { dia: 5,  x: XL, status: 'completed' },
+    { dia: 6,  x: XL, status: 'current'   },
+    { dia: 7,  x: XC, status: 'checkpoint-locked' },
+    { dia: 8,  x: XR, status: 'locked'    },
+  ];
+
+  const getY = (i: number) => Y0 + i * SP;
+  const trailH = getY(nodes.length - 1) + 24;
+
+  return (
+    <div style={{ padding: '10px', background: '#0D0D0D', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '5px' }}>
+        <div>
+          <div className="font-display" style={{ fontSize: '12px', letterSpacing: '2px', color: '#F5F5F5' }}>TRILHA</div>
+          <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '1px', color: '#555' }}>DE EVOLUÇÃO</div>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '1px', color: '#555' }}>DIA ATUAL</div>
+          <div className="font-display" style={{ fontSize: '22px', letterSpacing: '2px', color: '#FF3B3B', lineHeight: 1 }}>06</div>
+        </div>
+      </div>
+
+      {/* Stats bar */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 8px', background: '#111', border: '1px solid #1a1a1a', borderRadius: '4px', marginBottom: '8px' }}>
+        {[['5/21', 'DIAS', '#FF3B3B'], ['24%', 'PROGRESSO', '#FF8C42'], ['SOLDADO', 'NÍVEL', '#FFC857']].map(([val, label, color]) => (
+          <div key={label} style={{ textAlign: 'center' }}>
+            <div className="font-mono-t" style={{ fontSize: '5px', letterSpacing: '1px', color: '#555' }}>{label}</div>
+            <div className="font-display" style={{ fontSize: val === 'SOLDADO' ? '9px' : '12px', color, lineHeight: 1 }}>{val}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Divider */}
+      <div style={{ height: '1px', background: 'linear-gradient(to right, transparent, rgba(255,59,59,0.3), transparent)', marginBottom: '8px' }} />
+
+      {/* Trail */}
+      <div style={{ position: 'relative', width: '200px', height: `${trailH}px`, flexShrink: 0 }}>
+        {/* SVG paths */}
+        <svg style={{ position: 'absolute', top: 0, left: 0, overflow: 'visible' }} width="220" height={trailH + 20}>
+          {nodes.slice(0, -1).map((node, i) => {
+            const x1 = node.x, y1 = getY(i);
+            const x2 = nodes[i + 1].x, y2 = getY(i + 1);
+            const cy = (y1 + y2) / 2;
+            const comp = node.status === 'completed';
+            const active = node.status === 'current' || nodes[i + 1].status === 'current';
+            return (
+              <path
+                key={i}
+                d={`M ${x1} ${y1} C ${x1} ${cy}, ${x2} ${cy}, ${x2} ${y2}`}
+                fill="none"
+                stroke={comp ? '#FF3B3B' : active ? '#FF8C42' : '#222'}
+                strokeWidth={comp ? 2 : 1.5}
+                strokeDasharray={comp ? undefined : '4 3'}
+                opacity={comp ? 0.72 : 0.45}
+              />
+            );
+          })}
+        </svg>
+
+        {/* Nodes */}
+        {nodes.map((node, i) => {
+          const isCurrent = node.status === 'current';
+          const isDone = node.status === 'completed';
+          const isCPLocked = node.status === 'checkpoint-locked';
+          const isLocked = node.status === 'locked';
+          const size = isCurrent ? 34 : isDone ? 26 : 22;
+
+          return (
+            <div key={node.dia}>
+              {/* Pulse ring for current */}
+              {isCurrent && (
+                <div style={{
+                  position: 'absolute',
+                  left: node.x, top: getY(i),
+                  transform: 'translate(-50%, -50%)',
+                  width: size + 12, height: size + 12,
+                  borderRadius: '50%',
+                  border: '1.5px solid rgba(255,59,59,0.4)',
+                  animation: 'pulse-red 2s infinite',
+                }} />
+              )}
+              <div style={{
+                position: 'absolute',
+                left: node.x, top: getY(i),
+                transform: 'translate(-50%, -50%)',
+                width: size, height: size,
+                borderRadius: '50%',
+                background: isCurrent
+                  ? 'linear-gradient(135deg, #FF3B3B, #FF8C42)'
+                  : isDone ? '#161616' : '#0f0f0f',
+                border: `2px solid ${isCurrent ? '#FF3B3B' : isDone ? 'rgba(255,59,59,0.5)' : '#1e1e1e'}`,
+                boxShadow: isCurrent
+                  ? '0 0 18px rgba(255,59,59,0.6)'
+                  : isDone ? '0 0 8px rgba(255,59,59,0.2)' : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                opacity: isLocked ? 0.35 : isCPLocked ? 0.65 : 1,
+                zIndex: isCurrent ? 5 : 1,
+              }}>
+                {isDone && <span style={{ color: '#FF3B3B', fontSize: '10px', fontWeight: 700 }}>✓</span>}
+                {isCurrent && <span className="font-display" style={{ fontSize: '10px', color: '#fff', letterSpacing: '1px' }}>06</span>}
+                {(isLocked || isCPLocked) && <span style={{ fontSize: '9px' }}>🔒</span>}
+              </div>
+
+              {/* Labels */}
+              {isCurrent && (
+                <div style={{ position: 'absolute', left: node.x, top: getY(i) + size / 2 + 3, transform: 'translateX(-50%)', fontFamily: "'Share Tech Mono', monospace", fontSize: '5px', letterSpacing: '2px', color: '#FF3B3B', whiteSpace: 'nowrap' }}>
+                  ▶ HOJE
+                </div>
+              )}
+              {isCPLocked && (
+                <div style={{ position: 'absolute', left: node.x, top: getY(i) + 14, transform: 'translateX(-50%)', fontFamily: "'Share Tech Mono', monospace", fontSize: '5px', letterSpacing: '1px', color: 'rgba(255,200,87,0.65)', whiteSpace: 'nowrap' }}>
+                  ★ DIA 7
+                </div>
+              )}
+              {isDone && (
+                <div style={{ position: 'absolute', left: node.x, top: getY(i) + 15, transform: 'translateX(-50%)', fontFamily: "'Share Tech Mono', monospace", fontSize: '5px', letterSpacing: '1px', color: 'rgba(255,255,255,0.2)', whiteSpace: 'nowrap' }}>
+                  {String(node.dia).padStart(2, '0')}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -508,15 +687,18 @@ function HeroSection({ onCTA }: { onCTA: () => void }) {
             style={{
               flex: '0 0 auto',
               display: 'flex',
-              gap: '16px',
+              gap: '12px',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <div style={{ marginTop: '40px' }}>
+            <div style={{ marginTop: '50px' }}>
               <PhoneMockup screen={<HomeScreen />} />
             </div>
-            <div style={{ marginTop: '-40px' }}>
+            <div style={{ marginTop: '-20px' }}>
+              <PhoneMockup screen={<TrailScreen />} />
+            </div>
+            <div style={{ marginTop: '30px' }}>
               <PhoneMockup screen={<MissionScreen />} />
             </div>
           </motion.div>
@@ -730,6 +912,88 @@ function SolutionSection() {
 }
 
 /* ══════════════════════════════════════════════════
+   SECTION: MEMENTO MORI
+══════════════════════════════════════════════════ */
+function MementoMoriSection() {
+  // 4160 semanas = 80 anos (vida média)
+  // Para visualização: mostrar 52 semanas x 10 anos = 520 semanas (amostra)
+  const WEEKS_PREVIEW = 520; // 52 semanas x 10 anos
+  const WEEKS_PER_ROW = 52;
+  const rows = Math.ceil(WEEKS_PREVIEW / WEEKS_PER_ROW);
+  const weeks = Array.from({ length: WEEKS_PREVIEW }, (_, i) => i + 1);
+
+  return (
+    <section style={{ padding: '80px 24px', background: '#0a0a0a', borderTop: '1px solid rgba(255,59,59,0.1)', borderBottom: '1px solid rgba(255,59,59,0.1)' }}>
+      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        <Reveal>
+          <Tag color="red">MEMENTO MORI</Tag>
+          <h2
+            className="font-display"
+            style={{ fontSize: 'clamp(36px, 6vw, 64px)', letterSpacing: '4px', color: '#F5F5F5', margin: '16px 0 12px' }}
+          >
+            4.160 SEMANAS.<br />
+            <span style={{ color: '#FF3B3B' }}>QUANTAS JÁ SE FORAM?</span>
+          </h2>
+        </Reveal>
+
+        <Reveal delay={0.1}>
+          <p style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '17px', fontWeight: 500, color: '#888', marginBottom: '40px', maxWidth: '700px', lineHeight: 1.7 }}>
+            Cada <span style={{ color: '#F5F5F5', fontWeight: 700 }}>quadrado é uma semana</span>. Cores vermelhas = semanas que já se foram. Cores cinzas = semanas que você ainda tem. Isso aqui é uma amostra de 10 anos. 4.160 total.
+          </p>
+        </Reveal>
+
+        {/* Visual grid */}
+        <Reveal delay={0.2}>
+          <div style={{ marginBottom: '48px', padding: '32px', background: '#0D0D0D', border: '1px solid rgba(255,59,59,0.2)', borderRadius: '8px', overflow: 'auto' }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: `repeat(${WEEKS_PER_ROW}, 1fr)`,
+              gap: '2px',
+              minWidth: '100%',
+            }}>
+              {weeks.map((week, idx) => (
+                <div
+                  key={week}
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    background: idx < 260 ? 'rgba(255, 59, 59, 0.3)' : 'rgba(136, 136, 136, 0.4)',
+                    borderRadius: '1px',
+                  }}
+                />
+              ))}
+            </div>
+            <div style={{ marginTop: '16px', display: 'flex', gap: '24px', fontSize: '12px', fontFamily: "'Share Tech Mono', monospace" }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '12px', height: '12px', background: 'rgba(255, 59, 59, 0.3)', borderRadius: '2px' }} />
+                <span style={{ color: '#FF3B3B' }}>SEMANAS PASSADAS</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '12px', height: '12px', background: 'rgba(136, 136, 136, 0.4)', borderRadius: '2px' }} />
+                <span style={{ color: '#888' }}>SEMANAS RESTANTES</span>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Impactful message */}
+        <Reveal delay={0.3}>
+          <div style={{ padding: '32px', background: 'rgba(255,59,59,0.08)', border: '2px solid rgba(255,59,59,0.3)', borderRadius: '8px', textAlign: 'center' }}>
+            <p style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 'clamp(16px, 4vw, 24px)', fontWeight: 700, color: '#F5F5F5', lineHeight: 1.6, marginBottom: '16px' }}>
+              Você não é imortal. Seus 80 anos<br />
+              <span style={{ color: '#FF3B3B' }}>não são infinitos.</span>
+            </p>
+            <p style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '15px', fontWeight: 500, color: '#888', lineHeight: 1.6 }}>
+              Mas os próximos 21 dias? Esses você controla. Esses você pode transformar em ação real. Esses você pode usar para construir quem você quer ser.
+            </p>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ══════════════════════════════════════════════════
    SECTION: HOW IT WORKS
 ══════════════════════════════════════════════════ */
 function HowItWorksSection() {
@@ -742,14 +1006,20 @@ function HowItWorksSection() {
     },
     {
       num: '02',
+      title: 'PERCORRE A TRILHA DE 21 DIAS',
+      desc: 'A Trilha de Evolução mostra seu caminho completo. Cada nó é um dia. Concluídos brilham em vermelho. O dia atual pulsa. Bloqueados te lembram do que ainda falta conquistar.',
+      screen: <TrailScreen />,
+    },
+    {
+      num: '03',
       title: 'EXECUTA AS 3 MISSÕES',
       desc: 'Todo dia 3 missões: Corpo, Mente e Disciplina. Você marca concluído — ou declara falha. Sem meio-termo. Sem "vou compensar amanhã".',
       screen: <MissionScreen />,
     },
     {
-      num: '03',
+      num: '04',
       title: 'ACUMULA O STREAK',
-      desc: 'Cada dia executado aumenta seu streak e sua progressão de nível. Recruta → Soldado → Cabo → Sargento. Falhar reseta. A consequência é real.',
+      desc: 'Cada dia executado avança seu nível. Recruta → Soldado → Cabo → Sargento. Falhar reseta — mas checkpoints nos dias 7 e 14 protegem o progresso que você já conquistou.',
       screen: <CheckpointScreen />,
     },
   ];
@@ -1914,7 +2184,7 @@ function FAQSection() {
     },
     {
       q: 'O que acontece depois do dia 21?',
-      a: 'Você entra na tela de conclusão com suas estatísticas e pode reiniciar o desafio. Se adquiriu o Continuidade 30 Dias, tem missões extras para manter o ritmo.',
+      a: 'Você entra na tela de conclusão com suas estatísticas e pode reiniciar o desafio quantas vezes quiser.',
     },
     {
       q: 'Os bônus são entregues de uma vez?',
@@ -1990,6 +2260,7 @@ export default function VendasPage() {
         <SocialProofBar />
         <ProblemSection />
         <SolutionSection />
+        <MementoMoriSection />
         <HowItWorksSection />
         <MissionsSection />
         <BonusSection />

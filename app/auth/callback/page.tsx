@@ -15,11 +15,14 @@ export default function AuthCallbackPage() {
         // Verificar se o usuário já completou o onboarding
         const { data } = await supabase
           .from('usuarios')
-          .select('dia_atual')
+          .select('onboarding_completo')
           .eq('id', session.user.id)
           .single();
 
-        if (data) {
+        // Se não completou onboarding, ir para lá (obrigatório no primeiro acesso)
+        if (data && !data.onboarding_completo) {
+          router.replace('/onboarding');
+        } else if (data) {
           router.replace('/home');
         } else {
           router.replace('/onboarding');

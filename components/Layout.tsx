@@ -18,30 +18,36 @@ export default function Layout({ children }: LayoutProps) {
         <div className="container mx-auto px-4 py-3 max-w-2xl">
           <div className="flex justify-between items-center">
             {/* Navegação Principal */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               <button
                 onClick={() => router.push('/home')}
-                className="font-display text-xl tracking-[3px] text-vermelho hover:text-vermelho/80 transition-colors"
+                className="font-display text-[20px] tracking-[1px] text-vermelho hover:text-vermelho/80 transition-colors leading-tight"
               >
-                SALA DO TEMPO
+                SALA DO<br/>TEMPO
               </button>
               <button
                 onClick={() => router.push('/foco')}
-                className="font-display text-xl tracking-[3px] text-azul-mente hover:text-azul-mente/80 transition-colors"
+                className="font-display text-[20px] tracking-[1px] text-azul-mente hover:text-azul-mente/80 transition-colors"
               >
                 FOCO
               </button>
               <button
                 onClick={() => router.push('/bonus')}
-                className="font-display text-xl tracking-[3px] text-amarelo hover:text-amarelo/80 transition-colors"
+                className="font-display text-[20px] tracking-[1px] text-amarelo hover:text-amarelo/80 transition-colors"
               >
                 BÔNUS
               </button>
               <button
                 onClick={() => router.push('/arsenal')}
-                className="font-display text-xl tracking-[3px] text-laranja hover:text-laranja/80 transition-colors"
+                className="font-display text-[20px] tracking-[1px] text-laranja hover:text-laranja/80 transition-colors leading-tight"
               >
-                ARSENAL AVANÇADO
+                ARSENAL<br/>AVANÇADO
+              </button>
+              <button
+                onClick={() => router.push('/manga')}
+                className="font-display text-[20px] tracking-[1px] text-amarelo hover:text-amarelo/80 transition-colors"
+              >
+                MANGÁ
               </button>
             </div>
 

@@ -7,7 +7,7 @@ module.exports = {
   ],
   safelist: [
     {
-      pattern: /(bg|text|border)-(preto|vermelho|verde|amarelo|laranja|cinza-escuro|cinza-medio|cinza-borda|branco|branco-dim|azul-mente)/,
+      pattern: /(bg|text|border)-(preto|vermelho|verde|amarelo|laranja|roxo|cinza-escuro|cinza-medio|cinza-borda|branco|branco-dim|azul-mente)/,
       variants: ['hover', 'focus', 'active', 'placeholder'],
     },
     {
@@ -23,6 +23,7 @@ module.exports = {
         verde: '#00C853',
         amarelo: '#FFC857',
         laranja: '#FF8C42',
+        roxo: '#B366FF',
         'cinza-escuro': '#1A1A1A',
         'cinza-medio': '#2A2A2A',
         'cinza-borda': '#333333',

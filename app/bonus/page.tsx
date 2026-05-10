@@ -22,7 +22,7 @@ interface Bonus {
 const BONUS_DATA: Bonus[] = [
   {
     id: 'rotina-blindada',
-    titulo: 'Plano Diário',
+    titulo: '',
     subtitulo: 'Protocolo Diário de Alta Performance',
     rota: '/bonus/rotina-blindada',
     diaDesbloqueio: 1,
@@ -31,7 +31,7 @@ const BONUS_DATA: Bonus[] = [
   },
   {
     id: 'protocolo-anti-vicio',
-    titulo: 'Protocolo Anti-Vício',
+    titulo: '',
     subtitulo: 'Recuperação de Controle',
     rota: '/bonus/protocolo-anti-vicio',
     diaDesbloqueio: 7,
@@ -40,7 +40,7 @@ const BONUS_DATA: Bonus[] = [
   },
   {
     id: 'codigo-disciplina',
-    titulo: 'Código da Disciplina Militar',
+    titulo: '',
     subtitulo: 'Fundamentos de Execução',
     rota: '/bonus/codigo-disciplina',
     diaDesbloqueio: 14,

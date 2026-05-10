@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CountdownStep from "./CountdownStep";
 
@@ -465,10 +465,14 @@ export default function StepFlow({ onFinish, onStepChange }: StepFlowProps) {
   const goNext = useCallback(() => {
     setStepIndex((i) => {
       const next = Math.min(i + 1, STEP_IDS.length - 1);
-      onStepChange?.(next);
       return next;
     });
-  }, [onStepChange]);
+  }, []);
+
+  // Call onStepChange when stepIndex changes (after state update)
+  useEffect(() => {
+    onStepChange?.(stepIndex);
+  }, [stepIndex, onStepChange]);
 
   const currentId = STEP_IDS[stepIndex];
 

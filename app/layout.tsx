@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Bebas_Neue, Rajdhani, Share_Tech_Mono } from 'next/font/google';
 import './globals.css';
+import PWAInstallProvider from '@/components/PWAInstallProvider';
 
 const bebasNeue = Bebas_Neue({
   weight: '400',
@@ -61,7 +62,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className={`${bebasNeue.variable} ${rajdhani.variable} ${shareTechMono.variable}`}>
-      <body className={rajdhani.className}>{children}</body>
+      <body className={rajdhani.className}>
+        <PWAInstallProvider>
+          {children}
+        </PWAInstallProvider>
+      </body>
     </html>
   );
 }

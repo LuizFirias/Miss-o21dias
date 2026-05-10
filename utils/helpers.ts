@@ -43,3 +43,31 @@ export function getMensagemCheckpoint(dia: number): string {
   }
   return '';
 }
+
+export function getMultiplicadorDoPercentual(
+  percentual: 30 | 50 | 100
+): number {
+  switch (percentual) {
+    case 30:
+      return 1.3;
+    case 50:
+      return 1.5;
+    case 100:
+      return 2.0;
+    default:
+      return 1.0;
+  }
+}
+
+export function aplicarMultiplicadorModoGuerra(
+  corpo: MissaoCorpo,
+  multiplicador: number
+): MissaoCorpo {
+  const novoCorpo: MissaoCorpo = {};
+
+  for (const [exercicio, valor] of Object.entries(corpo)) {
+    novoCorpo[exercicio] = Math.round(valor * multiplicador);
+  }
+
+  return novoCorpo;
+}

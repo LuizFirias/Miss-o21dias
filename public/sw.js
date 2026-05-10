@@ -1,5 +1,5 @@
 // Service Worker para PWA
-const CACHE_NAME = 'sala-do-tempo-21-v1';
+const CACHE_NAME = 'sala-do-tempo-21-v2';
 const urlsToCache = [
   '/',
   '/home',
@@ -17,6 +17,18 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+
+  // Nunca cachear EPUBs, PDFs ou a API de mangá — arquivos grandes que quebram o cache
+  if (
+    url.pathname.startsWith('/api/manga/') ||
+    url.pathname.startsWith('/mangas/') ||
+    url.pathname.endsWith('.epub') ||
+    url.pathname.endsWith('.pdf')
+  ) {
+    return; // Deixa o browser fazer o fetch normalmente, sem SW
+  }
+
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);

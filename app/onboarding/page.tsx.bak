@@ -231,7 +231,7 @@ export default function OnboardingPage() {
           >
             {/* Título */}
             <h1 className="font-display text-[22px] tracking-[2px] text-branco mb-1">
-              QUAL SUA CONDIÇÃO<br />FÍSICA ATUAL?
+              QUAL SEU NÍVEL<br />ATUAL?
             </h1>
             <p className="text-[11px] text-branco-dim tracking-wider mb-6">
               seja honesto consigo mesmo
@@ -261,9 +261,9 @@ export default function OnboardingPage() {
                   <div className="font-body font-semibold text-[13px] tracking-wider text-branco">
                     INICIANTE
                   </div>
-                  <div className="font-body text-[10px] text-branco-dim mt-0.5">
-                    Pouca ou nenhuma experiência com exercícios
-                  </div>
+                </div>
+                <div className="font-mono text-[10px] text-branco-dim">
+                  0-5 dias
                 </div>
               </motion.div>
 
@@ -289,9 +289,9 @@ export default function OnboardingPage() {
                   <div className="font-body font-semibold text-[13px] tracking-wider text-branco">
                     INTERMEDIÁRIO
                   </div>
-                  <div className="font-body text-[10px] text-branco-dim mt-0.5">
-                    Experiência regular com exercícios básicos
-                  </div>
+                </div>
+                <div className="font-mono text-[10px] text-branco-dim">
+                  6-14 dias
                 </div>
               </motion.div>
 
@@ -317,9 +317,9 @@ export default function OnboardingPage() {
                   <div className="font-body font-semibold text-[13px] tracking-wider text-branco">
                     AVANÇADO
                   </div>
-                  <div className="font-body text-[10px] text-branco-dim mt-0.5">
-                    Experiência consistente e boa condição física
-                  </div>
+                </div>
+                <div className="font-mono text-[10px] text-branco-dim">
+                  15-21 dias
                 </div>
               </motion.div>
             </div>
@@ -340,7 +340,7 @@ export default function OnboardingPage() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex-1 flex flex-col overflow-hidden"
+            className="flex-1 flex flex-col"
           >
             {/* Título */}
             <h1 className="font-display text-[22px] tracking-[2px] text-branco mb-1">
@@ -363,10 +363,10 @@ export default function OnboardingPage() {
               />
             </div>
 
-            {/* Dores ou Limitações */}
+            {/* Limitações */}
             <div className="mb-auto">
               <p className="font-body text-[12px] tracking-wider text-branco-dim mb-3 uppercase">
-                VOCÊ TEM DORES OU LIMITAÇÕES?
+                LIMITAÇÕES OU DEFICIÊNCIAS
               </p>
               <div className="space-y-2">
                 <motion.div
@@ -396,10 +396,10 @@ export default function OnboardingPage() {
 
                 <motion.div
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => setLimitacao('joelho')}
+                  onClick={() => setLimitacao('auditiva')}
                   className={`
                     bg-cinza-medio border rounded-md p-3 flex items-center gap-2.5 cursor-pointer transition-all
-                    ${limitacao === 'joelho' 
+                    ${limitacao === 'auditiva' 
                       ? 'border-amarelo bg-amarelo/5' 
                       : 'border-cinza-borda'
                     }
@@ -407,24 +407,24 @@ export default function OnboardingPage() {
                 >
                   <div className={`
                     w-3.5 h-3.5 rounded-full border-2 flex-shrink-0
-                    ${limitacao === 'joelho' 
+                    ${limitacao === 'auditiva' 
                       ? 'border-amarelo bg-amarelo' 
                       : 'border-cinza-borda'
                     }
                   `} />
                   <div className="flex-1">
                     <div className="font-body font-semibold text-[13px] tracking-wider text-branco">
-                      DOR NO JOELHO
+                      DEFICIÊNCIA AUDITIVA
                     </div>
                   </div>
                 </motion.div>
 
                 <motion.div
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => setLimitacao('lombar')}
+                  onClick={() => setLimitacao('visual')}
                   className={`
                     bg-cinza-medio border rounded-md p-3 flex items-center gap-2.5 cursor-pointer transition-all
-                    ${limitacao === 'lombar' 
+                    ${limitacao === 'visual' 
                       ? 'border-laranja bg-laranja/5' 
                       : 'border-cinza-borda'
                     }
@@ -432,24 +432,24 @@ export default function OnboardingPage() {
                 >
                   <div className={`
                     w-3.5 h-3.5 rounded-full border-2 flex-shrink-0
-                    ${limitacao === 'lombar' 
+                    ${limitacao === 'visual' 
                       ? 'border-laranja bg-laranja' 
                       : 'border-cinza-borda'
                     }
                   `} />
                   <div className="flex-1">
                     <div className="font-body font-semibold text-[13px] tracking-wider text-branco">
-                      DOR LOMBAR
+                      DEFICIÊNCIA VISUAL
                     </div>
                   </div>
                 </motion.div>
 
                 <motion.div
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => setLimitacao('ambas')}
+                  onClick={() => setLimitacao('motora')}
                   className={`
                     bg-cinza-medio border rounded-md p-3 flex items-center gap-2.5 cursor-pointer transition-all
-                    ${limitacao === 'ambas' 
+                    ${limitacao === 'motora' 
                       ? 'border-vermelho bg-vermelho/5' 
                       : 'border-cinza-borda'
                     }
@@ -457,14 +457,39 @@ export default function OnboardingPage() {
                 >
                   <div className={`
                     w-3.5 h-3.5 rounded-full border-2 flex-shrink-0
-                    ${limitacao === 'ambas' 
+                    ${limitacao === 'motora' 
                       ? 'border-vermelho bg-vermelho' 
                       : 'border-cinza-borda'
                     }
                   `} />
                   <div className="flex-1">
                     <div className="font-body font-semibold text-[13px] tracking-wider text-branco">
-                      DOR NO JOELHO E LOMBAR
+                      DEFICIÊNCIA MOTORA
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setLimitacao('outra')}
+                  className={`
+                    bg-cinza-medio border rounded-md p-3 flex items-center gap-2.5 cursor-pointer transition-all
+                    ${limitacao === 'outra' 
+                      ? 'border-roxo bg-roxo/5' 
+                      : 'border-cinza-borda'
+                    }
+                  `}
+                >
+                  <div className={`
+                    w-3.5 h-3.5 rounded-full border-2 flex-shrink-0
+                    ${limitacao === 'outra' 
+                      ? 'border-roxo bg-roxo' 
+                      : 'border-cinza-borda'
+                    }
+                  `} />
+                  <div className="flex-1">
+                    <div className="font-body font-semibold text-[13px] tracking-wider text-branco">
+                      OUTRA
                     </div>
                   </div>
                 </motion.div>

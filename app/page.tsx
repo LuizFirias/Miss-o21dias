@@ -29,12 +29,12 @@ export default function RootPage() {
           router.replace('/onboarding');
         }
       } else {
-        // Sem sessão - redirecionar para página de vendas
-        router.replace('/sales');
+        // Sem sessão - redirecionar para página de login
+        router.replace('/login');
       }
     } catch (error) {
       console.error('Erro ao verificar auth:', error);
-      router.replace('/sales');
+      router.replace('/login');
     }
   }
 
