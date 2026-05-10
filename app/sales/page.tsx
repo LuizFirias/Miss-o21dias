@@ -772,8 +772,8 @@ function TickerBar() {
 ══════════════════════════════════════════════════ */
 function SocialProofBar() {
   const stats = [
-    { val: '2.400+', label: 'ALUNOS ATIVOS', color: '#FF3B3B' },
-    { val: '18.000+', label: 'DIAS EXECUTADOS', color: '#FFC857' },
+    { val: '724+', label: 'ALUNOS ATIVOS', color: '#FF3B3B' },
+    { val: '11.584+', label: 'DIAS EXECUTADOS', color: '#FFC857' },
     { val: '89%', label: 'COMPLETAM A SEMANA 1', color: '#00C853' },
     { val: '4.8★', label: 'AVALIAÇÃO MÉDIA', color: '#FFC857' },
   ];
@@ -805,9 +805,9 @@ function SocialProofBar() {
 ══════════════════════════════════════════════════ */
 function ProblemSection() {
   const problems = [
-    { icon: '✕', text: 'Abre o celular às 8h e acorda às 23h que não fez nada.' },
-    { icon: '↺', text: 'Começa toda semana segunda, para na quinta.' },
-    { icon: '—', text: 'Sabe exatamente o que precisa fazer — e não faz.' },
+    { icon: '✕', text: 'Acorda às 8h e vai dormir às 23h sem ter feito nada.' },
+    { icon: '↺', text: 'Começa a semana motivado e na quarta já perdeu o ritmo.' },
+    { icon: '—', text: 'Sabe exatamente o que precisa fazer — mas não faz.' },
     { icon: '✕', text: 'Fica motivado por 3 dias e perde o ritmo no quarto.' },
     { icon: '↯', text: 'Diz que vai mudar "quando tiver mais tempo".' },
   ];
@@ -904,9 +904,9 @@ function SolutionSection() {
 
         <Reveal delay={0.1}>
           <p style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '18px', fontWeight: 500, color: '#888', lineHeight: 1.7, marginBottom: '48px', maxWidth: '580px' }}>
-            Sala do Tempo 21 é um PWA — funciona no celular como app, sem instalar nada.
-            Cada dia você recebe <span style={{ color: '#F5F5F5', fontWeight: 700 }}>3 missões</span> calibradas ao seu nível.
-            Você executa. O sistema registra. O streak constrói identidade.
+            A Sala do Tempo 21 é um PWA — funciona no celular como app, sem instalar nada.
+            Cada dia você recebe <span style={{ color: '#F5F5F5', fontWeight: 700 }}>3 missões</span> de acordo com seu perfil.
+            Você executa, o sistema registra e seu 1% ta feito.
           </p>
         </Reveal>
 
@@ -1029,25 +1029,25 @@ function HowItWorksSection() {
     {
       num: '01',
       title: 'VOCÊ ENTRA POR DECISÃO',
-      desc: 'Acessa o PWA, define seu nível (iniciante, intermediário, avançado) e escolhe seu modo. Normal ou Guerra. Sem terceira opção.',
+      desc: 'Acessa o PWA, define seu nível (iniciante, intermediário, avançado) e escolhe seu modo (Normal ou Guerra). Sem terceira opção.',
       screen: <HomeScreen />,
     },
     {
       num: '02',
       title: 'PERCORRE A TRILHA DE 21 DIAS',
-      desc: 'A Trilha de Evolução mostra seu caminho completo. Cada nó é um dia. Concluídos brilham em vermelho. O dia atual pulsa. Bloqueados te lembram do que ainda falta conquistar.',
+      desc: 'A Trilha de Evolução mostra seu caminho completo onde cada nó é um dia, os concluídos brilham em vermelho, o dia atual pulsa. Bloqueados te lembram do que ainda falta conquistar.',
       screen: <TrailScreen />,
     },
     {
       num: '03',
       title: 'EXECUTA AS 3 MISSÕES',
-      desc: 'Todo dia 3 missões: Corpo, Mente e Disciplina. Você marca concluído — ou declara falha. Sem meio-termo. Sem "vou compensar amanhã".',
+      desc: 'Todo dia 3 missões: Corpo, Mente e Disciplina. Você marca concluído — ou declara falha, não existe meio-termo nem "vou compensar amanhã".',
       screen: <MissionScreen />,
     },
     {
       num: '04',
       title: 'ACUMULA O STREAK',
-      desc: 'Cada dia executado avança seu nível. Recruta → Soldado → Cabo → Sargento. Falhar reseta — mas checkpoints nos dias 7 e 14 protegem o progresso que você já conquistou.',
+      desc: 'Cada dia executado avança seu nível. Recruta → Soldado → Cabo → Sargento, se falhar reseta — mas checkpoints nos dias 7 e 14 protegem o progresso que você já conquistou.',
       screen: <CheckpointScreen />,
     },
     {
@@ -1067,7 +1067,7 @@ function HowItWorksSection() {
             className="font-display"
             style={{ fontSize: 'clamp(36px, 6vw, 64px)', letterSpacing: '4px', color: '#F5F5F5', margin: '16px 0' }}
           >
-            SIMPLES. DIRETO.<br />
+            SIMPLES, DIRETO<br />
             <span style={{ color: '#FF3B3B' }}>SEM COMPLICAÇÃO.</span>
           </h2>
         </Reveal>
@@ -1147,7 +1147,7 @@ function MissionsSection() {
             <span style={{ color: '#FFC857' }}>PROGRESSÃO REAL</span>
           </h2>
           <p style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '17px', fontWeight: 500, color: '#888', marginBottom: '40px', maxWidth: '560px', lineHeight: 1.6 }}>
-            Cada dia tem nome, missão e dificuldade crescente. O sistema escala com você — sem pular etapa.
+            Cada dia tem nome, missão e dificuldade crescente, o sistema escala com você — sem pular etapa.
           </p>
         </Reveal>
 
